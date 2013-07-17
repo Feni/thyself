@@ -38,7 +38,9 @@ body{
  E0E5DF - light light blue
  110803 - brown
   */
-  background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  //background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  background: url("https://s3.amazonaws.com/ThyselfStatic/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
