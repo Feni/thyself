@@ -1,0 +1,11 @@
+<!-- Form to log daily action -->
+  
+<form id="mEntryForm" method="POST" action="{{urlDate}}/m">
+	<h4>What did you do today?</h4> 
+	<input id="description" class="pad-1 fullInput" type="text" name="description" placeholder="I slept for 6.5 hours"/>
+	<input type="submit" class="flatButton" id="loginButton" value="Track"/>
+</form>
+
+<!-- Give a brief summary of parsed entries. Click to go to detailed view -->
+<ul id="sidebarActionList">
+</ul>

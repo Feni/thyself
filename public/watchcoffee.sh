@@ -1,0 +1,1 @@
+coffee --output static/js/thyself --watch --compile --join thyself sattic/coffee/thyself/data.coffee static/coffee/thyself/views.coffee static/coffee/thyself/routes.coffee static/coffee/thyself/thyself.coffee

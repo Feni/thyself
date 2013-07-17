@@ -1,0 +1,182 @@
+Empty stats
+
+# Server
+redis_version:2.6.13
+redis_git_sha1:00000000
+redis_git_dirty:0
+redis_mode:standalone
+os:Linux 3.8.0-19-generic x86_64
+arch_bits:64
+multiplexing_api:epoll
+gcc_version:4.7.3
+process_id:17023
+run_id:5f27aa40596c9861b1a26e2ae42f16ce7941f223
+tcp_port:6379
+uptime_in_seconds:2040
+uptime_in_days:0
+hz:10
+lru_clock:586050
+
+# Clients
+connected_clients:1
+client_longest_output_list:0
+client_biggest_input_buf:0
+blocked_clients:0
+
+# Memory
+used_memory:856928
+used_memory_human:836.84K
+used_memory_rss:2179072
+used_memory_peak:819272
+used_memory_peak_human:800.07K
+used_memory_lua:31744
+mem_fragmentation_ratio:2.54
+mem_allocator:jemalloc-3.2.0
+
+# Persistence
+loading:0
+rdb_changes_since_last_save:0
+rdb_bgsave_in_progress:0
+rdb_last_save_time:1369007264
+rdb_last_bgsave_status:ok
+rdb_last_bgsave_time_sec:-1
+rdb_current_bgsave_time_sec:-1
+aof_enabled:0
+aof_rewrite_in_progress:0
+aof_rewrite_scheduled:0
+aof_last_rewrite_time_sec:-1
+aof_current_rewrite_time_sec:-1
+aof_last_bgrewrite_status:ok
+
+# Stats
+total_connections_received:1
+total_commands_processed:0
+instantaneous_ops_per_sec:0
+rejected_connections:0
+expired_keys:0
+evicted_keys:0
+keyspace_hits:0
+keyspace_misses:0
+pubsub_channels:0
+pubsub_patterns:0
+latest_fork_usec:0
+
+# Replication
+role:master
+connected_slaves:0
+
+# CPU
+used_cpu_sys:9.49
+used_cpu_user:0.03
+used_cpu_sys_children:0.00
+used_cpu_user_children:0.00
+
+
+
+-----------------------------------------------------------
+
+http://degizmo.com/2010/03/22/getting-started-redis-and-python/
+
+---------------------
+
+Starting Noun Categorization
+Categorized 117096 in 270.423027992
+Inserted 814659 category entries into redis in 247.893098116
+Inserted all nouns in 1523.51476192
+
+------------
+The total space usage now is 60 mb. 
+
+About 15 MB is the plurals. 
+
+---------
+Aaaand just doing the plurals again took 1233.33389902 seconds. = That's 20 minutes!
+I guess having a single "plurals" key with over 100,000 keys is not the way to go!
+It's like having a single object and all other objects are it's variables. 
+
+I'm doing it wrong. New approach: 
+All of the words are going into their own hashes. 
+All of the categories will be in a sorted set. 
+
+Word:
+  t: type (v for verb, n for noun)
+  n: normalized form (ate -> eat for verbs. apple -> apples for nouns)
+  c: Categorization Key. The key used to lookup the category. Generally the singular form of the word. 
+
+
+---------
+Redis has just one name space it seems. So I can't have a hash and a sorted set with the same name (the word) at the same time like I thought (even though the methods are different so it should be able to differentiate betwen them.)
+So all of the categorizations will have a "c:" appended to the beginning of it. 
+
+--------
+Edited it to use a hash per word and have a sorted set per category group. And now it takes
+1816.30435014 seconds. 
+which is quiet a long wait, but sums up to be slightly less than the previous implementation. 
+The space usage is now 39.11M. 
+Which is really the important bit because ram is going to be a constraint with the teeny tiny ec2 machines we have. 
+I think this structure helps with lookup also!
+
+Anyway, I need to insert all of the verbs now and get a final count. 
+
+--------------
+
+Maybe I can use Google N-Gram databse for more words later. 
+
+Word schema new
+
+Word
+  n : True or false. If this word can be used as a noun or not
+  p : Plural form of this word
+  i : Infinitive form of this word
+  c : Category if this word is a noun
+  nCt : Noun count. Number of times its been used as a noun. Initial = 2
+  vCt : Verb count. Number of times its used as a verb. Initial = 5
+-----------
+When the user base increases, just increment all nCt and vCt by the new amount. That preserves the old votes (not overwriting. incrementing) while allowing for a new weighing which is less game-able. 
+
+The word database will start with w: and the category database will start with c:
+
+------------
+
+Begin: Inserting all nouns, their forms and categorizations
+End: Inserted all nouns in 1712.16672993
+Begin: Inserting all verbs
+End: Inserted all nouns in 0.442361831665
+
+40.08M total memory usage. 
+
+-----------
+
+Oops. There was a bug in inserting the verbs. I knew that was too good to be true! 
+Anyway, the revised numbers: 
+
+Begin: Inserting all verbs
+End: Inserted all verbs in 26.38
+42.60M
+
+---------
+
+go get github.com/garyburd/redigo/redis
+
+---------
+I had to go through every word and check if it's a noun and if it is a noun then if it has a plural and if that plural doesn't exist as a word, add it in as a word. Decided to write it in Go. 
+Redis Test completed in 3m33.570931736s over 93790 
+I'm pretty happy with that performance. You can run about 3 queries in 1 millisecond (0.3 ms per query) by my observation. Which isn't "woah" fast, but still pretty darn fast. 
+
+connections can be established and closed within 300 us which is also pretty good. 
+
+
+--------
+
+Loaded WordNet data set
+Loaded word frequency list
+Connected to Redis
+Begin: Inserting all nouns, their forms and categorizations
+End: Inserted all nouns in 2035.89989495
+Begin: Inserting all verbs
+End: Inserted all verbs in 28.3058691025
+
+
+----------
+
+

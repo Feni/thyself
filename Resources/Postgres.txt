@@ -1,0 +1,55 @@
+PostGres - Setup and config
+ apt-get install postgresql-9.1 
+ apt-get install postgresql-client
+ apt-get install postgresql-contrib
+ apt-get install pgadmin3 					-- only on the GUI client where we will manage the db from
+
+ https://help.ubuntu.com/community/PostgreSQL
+ -- also from command line
+
+ sudo -u postgres psql postgres   -- run the psql command as the user postgres with the username postgres
+ \password postgres     -- set password for postgres
+ 	- see notebook for pass. U ... 7
+ CREATE EXTENSION adminpack;    -- for GUI admin
+ Ctrl-D to exit
+
+ sudo -u postgres createdb thydb
+
+ Use pgAdmin to create goclient with minimum (login-only) powers
+
+
+psql thydb -h localhost -U goclient
+
+create table users(email varchar(32) not null UNIQUE primary key, user_id char(5) not null UNIQUE, pass_hash char(60) not null, tier int);
+
+create table journal_entries (user_id char(5) not null REFERENCES users(user_id), je_time timestamp with time zone not null, je_text text, PRIMARY KEY (user_id, je_time));
+
+create table metric_entries (user_id char(5) NOT NULL REFERENCES users(user_id), me_id char(8) not null UNIQUE, me_time timestamp with time zone not null, me_action varchar(32) not null, me_description varchar(160), primary key (user_id, me_time, me_id, me_action));
+
+create table metric_details (me_id char(8) not null REFERENCES metric_entries(me_id), d_group varchar(32), d_type varchar(160), d_amount double precision, primary key (me_id, d_type));
+-- amount and category can be null so don't key by them. 
+
+
+
+misc
+------------------
+SELECT EXTRACT(EPOCH FROM '2011-03-27 00:59:000'::timestamp);
+
+insert into users (email, user_id, pass_hash, tier) values ('test@gmail.com', 'someu', 'somepass', 0);
+
+insert into metric_entries VALUES ('abcde', NOW(), 'meid', 'kung fu kick', 'some description goes here', ARRAY[ROW('somecat', 'sometype', 12)::detail, ROW('newcat', NULL, 32)::detail, ROW('finalcat', 'finaltype', NULL)::detail]);
+
+Woooo... not multi-level queries. Just one, straight forward one. 
+------
+Email should just be used for initial auth. Userid should be used for everything else. 
+
+Each detail Key, Value and Category has a length limit of 32 characters each. 
+
+
+-------
+USER_ID 5 chars
+Entry_ID 8 chars
+Detail
+	- category - 32 char
+	- type - 160 char
+	- value - float64 

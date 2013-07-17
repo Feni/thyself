@@ -1,0 +1,194 @@
+/*! Thanks to - Typeplate(.com) by Zachary Kain & Dennis Gaebel for typographic defaults. V 1.0.1 (CC) 3.0 */
+$weight: normal;
+$line-height: 1.65;
+$font-size: 112.5; // percentage value (16 * 112.5% = 18px)
+$font-base: 16 * ($font-size/100); // converts our percentage to a pixel value
+$measure: $font-base * $line-height;
+$font-family: serif;
+$font-family-sans: sans-serif;
+$font-properties: $weight, $line-height, $font-size, $font-family;
+$serif-boolean: true !default;
+
+
+$body-copy-color: #444;
+$heading-color: #222;
+
+$tera: 117;		//	117	= 18 × 6.5
+$giga: 90;		//	90  = 18 × 5
+$mega: 72;		//	72  = 18 × 4
+$alpha: 60;		//	60  = 18 × 3.3333
+$beta: 48;		//	48  = 18 × 2.6667
+$gamma: 36;		//	36  = 18 × 2
+$delta: 24;		//	24  = 18 × 1.3333
+$epsilon: 21;	//	21  = 18 × 1.1667
+$zeta: 18; 		//	18  = 18 × 1
+
+$type-scale-unit-value: rem;
+
+$indent-val: 1.5em;
+
+@function ems($target, $context) {
+	@return ($target/$context)#{em};
+}
+
+
+// $M o d u l a r    S c a l e
+// --------------------------------------------------------------------------
+// http://thesassway.com/projects/modular-scale
+@function modular-scale($scale, $base, $value) {
+	// divide a given font-size by base font-size & return a relative em value
+	@return ($scale/$base)#{$value};
+}
+
+@function measure-margin($scale, $measure, $value) {
+	// divide 1 unit of measure by given font-size & return a relative em value
+	@return ($measure/$scale)#{$value};
+}
+
+
+
+// ==========================================================================
+//
+// $M i x i n s
+//
+// ==========================================================================
+
+
+// $M o d u l a r    S c a l e
+// --------------------------------------------------------------------------
+
+// $Typographic scale
+@mixin modular-scale($scale, $base, $value, $measure:"") {
+	font-size: $scale#{px};
+	font-size: modular-scale($scale, $base, $value);
+	@if $measure != "" {
+		margin-bottom: measure-margin($scale, $measure, $value);
+	}
+}
+
+
+// $B o d y    C o p y
+// --------------------------------------------------------------------------
+
+@mixin base-type($weight, $line-height, $font-size, $font-family...) {
+	@if $serif-boolean {
+		font: $weight #{$font-size}%/#{$line-height} $font-family;
+	}@else {
+		font: $weight #{$font-size}%/#{$line-height} $font-family-sans;
+	}
+}
+
+
+// $F o n t - S i z e  - A d j u s t
+// --------------------------------------------------------------------------
+// correct x-height for fallback fonts: requires secret formula
+// yet to be discovered. This is still wacky for support. Use
+// wisely grasshopper.
+
+@mixin font-size-adjust($adjust-value) {
+	// firefox 17+ only (as of Feb. 2013)
+	font-size-adjust: $adjust-value;
+}
+
+
+
+// $W o r d    W r a p
+// --------------------------------------------------------------------------
+// Silent Sass Classes - A.K.A Placeholders
+//
+// normal: Indicates that lines may only break at normal word break points.
+// break-word : Indicates that normally unbreakable words may be broken at
+// arbitrary points if there are no otherwise acceptable break points in the line.
+
+%breakword {
+	word-wrap: break-word;
+}
+
+%normal-wrap {
+	word-wrap: normal;
+}
+
+%inherit-wrap {
+	word-wrap: auto;
+}
+
+
+// ==========================================================================
+//
+// $T y p e p l a t e  S t y l i n g
+//
+// ==========================================================================
+
+
+// $G l o b a l s
+// --------------------------------------------------------------------------
+
+html {
+	@include base-type($font-properties...);
+}
+
+body {
+	// normal: Indicates that lines may only break at normal word break points.
+	// break-word : Indicates that normally unbreakable words may be broken at ...
+	// arbitrary points if there are no otherwise acceptable break points in the line.
+	@extend %breakword;
+	color: $body-copy-color;
+}
+
+
+// $H e a d i n g s
+// --------------------------------------------------------------------------
+
+// styles for all headings, in the style of @csswizardry
+%hN {
+	// voodoo to enable ligatures and kerning
+	text-rendering: optimizeLegibility;
+	// this fixes huge spaces when a heading wraps onto two lines
+	line-height: 1;
+	margin-top: 0;
+}
+
+// make a multi-dimensional array, where:
+// the first value is the name of the class
+// and the second value is the variable for the size
+$sizes: tera $tera, giga $giga, mega $mega, alpha $alpha, beta $beta, gamma $gamma, delta $delta, epsilon $epsilon, zeta $zeta;
+
+// for each size in the scale, create a class
+@each $size in $sizes {
+	.#{nth($size, 1)} {
+		@include modular-scale(nth($size, 2), $font-base, '#{$type-scale-unit-value}', $measure);
+	}
+}
+
+// associate h1-h6 tags with their appropriate greek heading
+h1 {
+	@extend .alpha;
+	@extend %hN;
+}
+
+h2 {
+	@extend .beta;
+ 	@extend %hN;
+}
+
+h3 {
+	@extend .gamma;
+	@extend %hN;
+}
+
+h4 {
+	@extend .delta;
+ 	@extend %hN;
+}
+
+h5 {
+	@extend .epsilon;
+ 	@extend %hN;
+}
+
+h6 {
+	@extend .zeta;
+ 	@extend %hN;
+}
+
+

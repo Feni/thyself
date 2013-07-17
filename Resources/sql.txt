@@ -1,0 +1,117 @@
+mysql -u root -p 
+type in caspian-c-capado
+
+create database testdb;
+use testdb;
+
+Users
+  email - PK
+  Pass_Hash
+  tier - 0 = unverified email, 1 = verified free user, 2 = premium basic, 3 = premium med, 4 = premium elite
+  user_id       // Publically recognized name of user - URL. Can't be changed. 
+
+  515ca1d099e9b60b86074909
+ce0972954b4ffd21c6064a60d86a9032e42732ebc3e839205b03abe6
+
+CREATE TABLE testdb.users ( user_id char(32) not null primary key,  email varchar(32),  pass_hash char(60),  tier int);
+
+INSERT INTO testdb.users (userid, email, salt, passHash, tier) VALUES ('someuserid', 'someemail@gmail.com', 'somesaltysalt', 'heregoespasshash', 0);
+
+Created and last logged in can come later. 
+
+-----------
+
+Users
+  email - pk
+  user_id   - Static per user. never changes. 
+  pass_hash
+  tier
+
+Access_Tokens
+  user_id
+  token_hash     - sha256 outputs 64 chars
+  Token_Name
+  date_created    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  primary key (user_id, token_hash)
+
+The api key hash is a randomly generated 32 char string. 
+We store the sha256 of it. 
+API requests contain this string as the password. 
+
+
+Journal_Entries
+  USER_ID     // primary key (USER_ID, JE_DATE)
+  JE_Date     // Date is the id. It will be the url. 
+  JE_Text     // type = text. length = 65536
+
+// Entries from the sidebar
+Metric_Entries
+  USER_ID           // PK (USER_ID, ME_DATETIME, ME_ID)
+  ME_DateTime       // YYYY-MM-DD-HR-MIN-SEC
+  ME_ID
+  me_URL
+  me_description       // length = 160 characters. Maybe we can allow users to text in their entries later
+  action_type
+
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| user_id     | char(32)     | NO   | PRI | NULL    |       |
+| me_dt       | datetime     | NO   | PRI | NULL    |       |
+| me_id       | char(32)     | NO   | PRI | NULL    |       |
+| me_url      | varchar(512) | YES  |     | NULL    |       |
+| me_description | varchar(160) | NO   |     | NULL    |       |
+| action_type | varchar(32)  | NO   |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+
+
+Metric_Actions
+  user_id         // primary key = (user_id, action_type)
+  action_type     // text. case insensitive
+  action_Category
+
+Metric_Details
+  ME_ID       // Primary Key = (ME_ID, Detail_Type). It doens't make sense to say "I ate 3 bananas and 4 bananas"
+  Detail_Type 
+  Detail_Amount
+  Detail_Category
+
+// to get a journal entry, do
+select user_id from users where access_token == $ACCESS_TOKEN
+select journal_entry where date =
+
+
+
+create table users (email varchar(32) not null primary key, user_id char(32) not null, pass_hash char(60) not null, tier int);
+
+create table journal_entries (user_id char(32) not null, je_dt datetime not null, je_text text, PRIMARY KEY (user_id, je_dt));
+
+create table metric_entries (user_id char(32) not null, me_dt datetime not null, me_id char(32) not null, me_url varchar(512), me_description varchar(160) not null, action_type varchar(32) not null, primary key (user_id, me_dt, me_id));
+
+create table metric_actions (user_id varchar(32), action_type varchar(32), action_category varchar(32), primary key (user_id, action_type));
+
+create table metric_details (me_id char(32), detail_type varchar(32), detail_amount FLOAT, detail_category varchar(32), primary key (me_id, detail_type));
+
+create table access_tokens (user_id char(32), token_hash char(64), token_name varchar(32), date_created timestamp not null default current_timestamp, primary key (user_id, token_hash));
+
+On signup, create a sample Metric Entry with the "Joined Thyself.io"
+
+
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 = 62 chars. 
+
+number of words in the english language = 1,019,729
+so verbs id : 4 bytes long = 62 ^ 4 = 14 million
+
+if we allow 160 chars descriptors for entries. avg word length = 5.1 letters. aprox 32 words. 
+so if we want absolute max, there's like 1 million choose 32 which is a huuuge number. 
+
+but we don't need that. We can just do 6 characters for now. which will give us. 56 billion entries. 
+which should last us a good bit. 
+so entry ID = 6 chars
+
+user_id = 4 bytes. 
+
+-------
+
+user_id = 5 chars
+entry_id = 8 chars. waay more than enough. 
