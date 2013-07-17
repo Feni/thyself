@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var logFile, logFileErr = os.OpenFile("/var/www/thyself/logs/go_thy.log", os.O_RDWR|os.O_APPEND, 0660)
+var logFile, logFileErr = os.OpenFile("/var/www/go/logs/go_thy.log", os.O_RDWR|os.O_APPEND, 0660)
 
 //var Log = log.New(LogFile, "", log.Ldate|log.Ltime)
 var infoLog = log.New(logFile, "Info: ", log.Ldate|log.Ltime)

@@ -34,7 +34,7 @@ var cookieStore = sessions.NewCookieStore(
 const defaultSessionName = "thyself_private"
 
 func LoadTemplates() {
-	templateLoc := "/var/www/thyself/src/thyself/public/"
+	templateLoc := "/var/www/go/src/thyself/public/"
 
 	loginForm, err := ioutil.ReadFile(templateLoc + "partials/anon/loginForm.html")
 	log.Debug(err, "Error loading login form")
