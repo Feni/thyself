@@ -9,14 +9,14 @@ import (
 // mysql.New
 var sqldb, Sqlconn_err = sql.Open("postgres", "user=goclient password=gothy@0 dbname=thydb")
 
-// user: email, user_id, pass_hash, tier
+// user: email, user_id, pass_hash,
 // journal_entries: user_id, je_time, je_text
 // metric_entries: user_id, me_id, me_time, me_action, me_description
 // metric_details: me_id, d_group, d_type, d_amount
 
 // User account queries
-var SQL_CREATE_USER, Sql_create_err = sqldb.Prepare("INSERT INTO users (email, user_id, pass_hash, tier) VALUES ($1, $2, $3, $4)")
-var SQL_RETRIEVE_PASS, Sql_pass_err = sqldb.Prepare("SELECT pass_hash, user_id, tier FROM users where email=$1 LIMIT 1")
+var SQL_CREATE_USER, Sql_create_err = sqldb.Prepare("INSERT INTO users (email, user_id, pass_hash) VALUES ($1, $2, $3)")
+var SQL_RETRIEVE_PASS, Sql_pass_err = sqldb.Prepare("SELECT pass_hash, user_id FROM users where email=$1 LIMIT 1")
 
 // Metric queries
 var SQL_RETRIEVE_ALL_METRICS, Sql_all_metrics_err = sqldb.Prepare("SELECT me_id, EXTRACT(EPOCH FROM(me_time))::int, me_action, me_description FROM metric_entries where user_id=$1 ORDER BY me_time")

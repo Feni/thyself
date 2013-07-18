@@ -20,7 +20,7 @@ PostGres - Setup and config
 
 psql thydb -h localhost -U goclient
 
-create table users(email varchar(32) not null UNIQUE primary key, user_id char(5) not null UNIQUE, pass_hash char(60) not null, tier int);
+create table users(email varchar(64) not null UNIQUE primary key, user_id char(5) not null UNIQUE, pass_hash char(60) not null);
 
 create table journal_entries (user_id char(5) not null REFERENCES users(user_id), je_time timestamp with time zone not null, je_text text, PRIMARY KEY (user_id, je_time));
 
@@ -35,7 +35,7 @@ misc
 ------------------
 SELECT EXTRACT(EPOCH FROM '2011-03-27 00:59:000'::timestamp);
 
-insert into users (email, user_id, pass_hash, tier) values ('test@gmail.com', 'someu', 'somepass', 0);
+insert into users (email, user_id, pass_hash) values ('test@gmail.com', 'someu', 'somepass');
 
 insert into metric_entries VALUES ('abcde', NOW(), 'meid', 'kung fu kick', 'some description goes here', ARRAY[ROW('somecat', 'sometype', 12)::detail, ROW('newcat', NULL, 32)::detail, ROW('finalcat', 'finaltype', NULL)::detail]);
 

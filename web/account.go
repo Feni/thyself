@@ -11,11 +11,11 @@ import (
 // and if there's a @ and .
 func ValidateEmail(emailAddr string) bool {
 	return strings.Count(emailAddr, "@") == 1 && strings.Count(emailAddr, ".") >= 1 &&
-		len(emailAddr) > 4 && len(emailAddr) < 32
+		len(emailAddr) > 4 && len(emailAddr) < 64
 }
 
 func ValidatePassword(password string) bool {
-	return len(password) >= 6 && len(password) < 32
+	return len(password) >= 6 && len(password) < 64
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +41,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if valid {
-		user, err := data.Registeruser(email, password, 0)
+		user, err := data.Registeruser(email, password)
 		if err == nil {
 			// Log the user in
 			session.Values["user_id"] = user
@@ -76,10 +76,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				session.Values["user_id"] = user.User_ID
 				session.AddFlash("success : Login Successful!")
-				session.AddFlash("error : Could not Login. Username or Password does not match.")
+			} else {
+				session.AddFlash("error : " + err.Error())
 			}
 		} else {
-			session.AddFlash("error : Username and password doesn't seem right")
+			session.AddFlash("error : Username or password does not seem right")
 		}
 		session.Save(r, w)
 	}

@@ -24,12 +24,16 @@ $color-highlights-dblue: rgb(3,27,38);     /* cyan blue for sidebar highlights *
 
 $color-error: rgb(204,30,20);
 
-html, body { height: 100%; width: 100%; margin: 0; }
+html, body { 
+  height: 100%; 
+  width: 100%; 
+  margin: 0; 
+  padding: 0;
+  background-color: $color-secondary-bg-1;
+}
 
 body{
-  font-family: $serif-heading-font-family;
-  background-color: $color-secondary-bg-1;
-  color: $color-primary-fg;
+  font-family: $serif-heading-font-family;  
 
   /* Image Pallete
  4E4945 - brown grey
@@ -158,6 +162,7 @@ ul{
   background-color: rgba(20, 18, 17, 0.98);   
   margin-top: 3%;
   color: $color-secondary-fg;
+  overflow: hidden;
 
   h3, h4, h5, h6{
     color: $color-secondary-fg;
@@ -296,8 +301,6 @@ $curve-radius:2.5px;
   text-align: right;
 }
 
-
-
 .actionDetails{
   white-space: nowrap;
   padding-left: 0.9% !important;
@@ -318,7 +321,7 @@ $curve-radius:2.5px;
   }
   .val {
     font-family: $sans-font-family; 
-    font-size: 1.3rem;
+    font-size: 1rem;
     margin-bottom: 0.148rem;
   }
 }
