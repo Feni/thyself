@@ -15,7 +15,7 @@ type JournalEntry struct {
 }
 
 func UpsertJournalEntry(user_id string, t time.Time, je_text string) {
-	log.Info("data : Add Journal Entry : ", user_id, " : time : ", t, " : text : ", je_text)
+	log.Info("data : Add Journal Entry : ", user_id, " : time : ", t)
 	existingJe, err := GetJournalEntry(user_id, t)
 
 	if err == nil { // a journal entry exists already. update it if it's different
