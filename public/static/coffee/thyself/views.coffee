@@ -93,7 +93,7 @@ class Thyself.Views.EntryEditView extends Backbone.View
       "/#{@model.get('time').getDate()}"
 
     $(@el).html("""
-      <a href="#{urlDate}"> <h2 class="date">#{@model.get('time').toDateString()}</h2></a>
+      <a href="#{urlDate}"> <h4 class="date">#{@model.get('time').toDateString()}</h4></a>
         <input type="text" class="editAction" placeholder="Action" maxlength="32" value='#{@model.get("metric")}'/>
         <input type="text" class="editDescription" placeholder="Description" maxlength="160" value='#{@model.get("description")}'/>
       <p class="time">#{@model.get("time").toTimeString()}</p>

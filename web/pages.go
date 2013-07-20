@@ -166,7 +166,7 @@ const PrefetchExample = `
       "user_id": "demo",
       "description": "Washed half load of blue jeans at medium temperature",
       "time": new Date(1372495418 * 1000),
-      "metric": "Laundry",
+      "metric": "laundry",
       "details": new Thyself.Models.Details([
       	new Thyself.Models.Detail({
           "type": "blue",

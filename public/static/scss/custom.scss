@@ -1,10 +1,9 @@
 @import "_mintypeplate.scss";
 @import "foundation/foundation-global", "foundation/components/global";
 
-$sans-font-family: "Open Sans", "Helvetica Neue", "Helvetica", Arial, sans-serif; /* Sans for stats. It looks good as big numbers */
-$sans-heading-family: "Raleway", $sans-font-family;   /* Use the crisp font for section headings */
-$serif-heading-font-family: "Vollkorn", "Droid Serif",  serif; /* For title text */
-$serif-sub-font-family: "Droid Serif", "Vollkorn", serif; /* Good for body text */
+$sans-font-family: "lato", Arial, "Helvetica Neue", "Helvetica", Verdana, sans-serif; /* Sans for stats. It looks good as big numbers */
+$serif-heading-font-family: "Vollkorn", "Times", serif; /* For title text */
+$serif-sub-font-family: "PT Serif", "Times", "Times New Roman", "Vollkorn", serif; /* Good for body text */
 
 /* Used for the text entry */
 $color-primary-bg: rgb(252, 252, 242);  // A tasteful light grey with a subtle hint of paper-yellow
@@ -29,12 +28,18 @@ html, body {
   width: 100%; 
   margin: 0; 
   padding: 0;
-  background-color: $color-secondary-bg-1;
+  background-color: $color-secondary-bg-1;  
+  background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  //background: url("https://s3.amazonaws.com/ThyselfStatic/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;  
 }
 
 body{
   font-family: $serif-heading-font-family;  
-
   /* Image Pallete
  4E4945 - brown grey
  DDBC9D - pinkcream 
@@ -42,13 +47,7 @@ body{
  E0E5DF - light light blue
  110803 - brown
   */
-  //background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
-  background: url("https://s3.amazonaws.com/ThyselfStatic/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
-  
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+
 }
 
 header{
@@ -73,18 +72,17 @@ h1, h2, h3, h4, h5, h6 {
   font-style: normal;
 }
 
-h1, h2{
+h1, h2, h3{
   font-family: $serif-heading-font-family;
 }
 
-h3, h4, h5, h6 {
-  font-family: $sans-heading-family;
+h4, h5, h6 {
+  font-family: $sans-font-family;
 }
 
 p{
   font-family: $serif-sub-font-family;
   text-indent: 1.5em;
-  font-weight: normal;
   font-size: 1em;
   line-height: 1.65em;
 }
@@ -92,8 +90,8 @@ p{
 textarea{
   background: none;
   border: none;
+  outline: none;
   font-family: $serif-sub-font-family;
-  font-weight: normal;
   font-size: 1em;
   line-height: 1.65em;  
 }
@@ -110,12 +108,13 @@ table{
 }
 
 th{
-  padding: 8px;
+  padding: 5px;
   line-height: 20px;
   text-align: left;
   vertical-align: bottom;
-  font-weight: bold;
-  font-family: $sans-heading-family;
+  font-family: $sans-font-family;
+  font-weight: 400;
+  font-style: normal;
 }
 
 td{
@@ -127,12 +126,14 @@ td{
 
 input {
   display: block;
+    font-family: $sans-font-family;
 }
 
 label, small{
-  font-family: $sans-heading-family;
   font-size: .62em;
-  font-weight: bold;
+  font-weight: 400;
+  font-style: normal;
+  font-family: $sans-font-family;
 }
 
 
@@ -205,10 +206,20 @@ $curve-radius:2.5px;
   box-shadow: 0 0px 9px 1px rgba(0, 0, 0, .35);
 }
 
+$light-color:230;
+.lighted {
+  -webkit-box-shadow: 0 0px 9px 1px rgba($light-color, $light-color, $light-color, .35);
+  -moz-box-shadow: 0 0px 9px 1px rgba($light-color, $light-color, $light-color, .35);
+  box-shadow: 0 0px 9px 1px rgba($light-color, $light-color, $light-color, .35);
+}
+
+
 
 /* Input field styling for edit page */
 .editAction, .editDescription, .detailAmount, .detailType, .detailGroup{
   font-family: $sans-font-family;
+  font-style: normal;
+  font-weight: 400;
   background: none;
   border: none;
   border-bottom: 1px dotted rgba(20, 20, 20, 0.3); 
@@ -217,7 +228,7 @@ $curve-radius:2.5px;
 }
 
 .editAction{
-  font-family: $sans-heading-family;
+  font-family: $serif-heading-font-family;
   font-size: 2em;
   text-transform: capitalize;
 }
@@ -231,7 +242,7 @@ $curve-radius:2.5px;
   display: inline-block;  
   padding: 0.42rem 1.82rem 0.42rem 1.82rem;
   margin: 0.8rem 0rem 0.8rem 0rem;
-  font:normal 0.9375em $sans-heading-family;  
+  font:normal 0.9375em $sans-font-family;  
   text-align: center;
   vertical-align: center;
 }
@@ -287,9 +298,10 @@ $curve-radius:2.5px;
 
 
 .actionHeading{
-  font-family: $sans-heading-family;
+  font-family: $sans-font-family;
   font-weight: normal;
-  font-size: 1.217rem;
+  font-style: normal;
+  font-size: 1.317rem;
   text-transform: capitalize;
   margin-top: 0.5rem; 
   padding-right: 0.32rem !important;
@@ -297,7 +309,7 @@ $curve-radius:2.5px;
 }
 
 .date {
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   text-align: right;
 }
 
@@ -318,11 +330,16 @@ $curve-radius:2.5px;
     font-size: 0.7rem;
     margin-bottom: 0.1rem;
     font-family: $sans-font-family; 
+    font-style: normal;
+    font-weight: 400;    
   }
   .val {
     font-family: $sans-font-family; 
-    font-size: 1rem;
-    margin-bottom: 0.148rem;
+    font-size: 1.13rem;
+    font-style: normal;
+    text-transform: capitalize;
+    font-weight: 400;    
+    margin: 0.148rem 0rem;
   }
 }
 
@@ -336,10 +353,11 @@ $curve-radius:2.5px;
 }
 
 .fullInput{
+  font-family: $sans-font-family;
   width:100%;
   display:block;
   height: 32px;
-  padding: 4px 7px 2px;  
+  padding: 0px 5px 2px;  
 }
 .actionInstance {
   padding: 0rem 1.9375rem;
@@ -371,7 +389,6 @@ $curve-radius:2.5px;
   vertical-align:top;
   text-rendering:auto
 }
-
 
 .width-3, .fixed-width-3{
   width:25%;
@@ -529,6 +546,19 @@ $sidebar-curve: 4px;
   #journal_entry{
     min-height: 900px;
   }
+
+  .notifications {
+    
+  }
+
+  .message {
+    width: 100%;
+    margin-right: 0%;
+    margin-left: 0%
+
+  }
+
+
 }
 
 
@@ -559,7 +589,71 @@ $sidebar-curve: 4px;
     left: 0%;
   }  
 
+  .message {
+    width: 80%;
+    margin-left: 10%;    
+  }
 }
 
 
+/* Based on Alertify.js - Credit to Fabien Doiron */
+.notifications {
+  bottom: 10px;
+}
+
+.message {
+  background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.9);
+  padding: 15px;
+  
+  border-radius: 4px 4px 4px 4px;
+  color: rgb(255, 255, 255);
+  text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.5);
+  font-family: sans-serif;
+
+  display: block;
+  margin-top: 10px;
+  position: relative;
+
+  left: 0px;
+  opacity: 1;
+}
+
+
+.message{
+  -moz-animation-name: slideMessage;
+  -moz-animation-iteration-count: once;
+  -moz-animation-timing-function: ease-in;
+  -moz-animation-duration: 0.5s;
+
+  -webkit-animation-name: slideMessage;
+  -webkit-animation-iteration-count: once;
+  -webkit-animation-timing-function: ease-in;
+  -webkit-animation-duration: 0.5s;
+}
+
+.message-success {
+  background-color: green;
+}
+
+@-moz-keyframes slideMessage {
+    0% {
+        left: -300px;
+        opacity: 0;
+    }
+    100% {
+        left: 0px;
+        opacity: 1;
+    }
+}
+
+/*
+@-webkit-keyframes slideMessage {
+    0% {
+        right: 0px;
+    }
+    100% {
+        right: -300px;
+    }
+}
+*/
 
