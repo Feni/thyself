@@ -55,7 +55,7 @@ func DemoParseHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RenderJournal(journalText, preData, urlDate, dateStr, errors, sidebarExtra string) string {
+func RenderJournal(journalText, preData, urlDate, dateStr, flashes, sidebarExtra string) string {
 	actionRendered := string(TemplateActionEntry.Render(map[string]string{
 		"urlDate": urlDate}))
 	textEmpty := "true"
@@ -68,10 +68,11 @@ func RenderJournal(journalText, preData, urlDate, dateStr, errors, sidebarExtra 
 		"empty":       textEmpty,
 		"urlDate":     urlDate}))
 	pageRendered := string(TemplateMain.Render(map[string]string{
-		"sidebar":        errors + actionRendered + sidebarExtra,
+		"sidebar":        actionRendered + sidebarExtra,
 		"journalEntry":   journalRendered,
 		"prefetchedData": preData,
-		"urlDate":        urlDate}))
+		"urlDate":        urlDate, 
+		"flashes" : flashes}))
 	return pageRendered
 }
 

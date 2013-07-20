@@ -1,11 +1,13 @@
-<form method="POST" id="sidebarLoginForm" action="/a/login">
-  <div class="width-6 pad-1 column">
-    <label>Email Address</label>
-    <input class="fullInput" type="text" name="email" placeholder="hi@thyself.io"/>
-  </div>
-  <div class="width-5 pad-1 column"> 
-    <label>Password</label>
-    <input class="fullInput" type="password" name="password"/>
-  </div>
-  <input type="submit" class="flatButton" id="loginButton" value="Login" onClick="$('#sidebarLoginForm').submit(); return false;"/>
+<form method="POST" action="/a/login">
+  <fieldset>
+	  <div class="width-6 pad-1 column">
+	    <label>Email Address</label>
+	    <input class="fullInput" type="text" name="email" placeholder="hi@thyself.io"/>
+	  </div>
+	  <div class="width-5 pad-1 column"> 
+	    <label>Password</label>
+	    <input class="fullInput" type="password" name="password"/>
+	  </div>
+	  <input type="submit" class="flatButton" id="loginButton" value="Login" onClick="$('#sidebarLoginForm').submit(); return false;"/>
+  </fieldset>
 </form>

@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 	"thyself/data"
+	"thyself/log"
 )
 
 var r_quoted, _ = regexp.Compile(`("[^"]*")`)
@@ -26,18 +27,31 @@ func getComponents(sentence string) []*data.Word {
 
 	const bufferCap = 3
 
-	for index, word := range allWords {
-		num := r_number.FindString(word)
+	for index, word := range allWords {	// all words = a b c d e 
+		num := r_number.FindString(word)	// use regex to check if word is a number
+
+		// Calculate what the length of the buffer should be at the end of this loop
+		// If the buffer currently has one element in it, 
+		// then by the end of this loop it should have 2 
+		// (unless 2 > buffer cap)
 		goalLen := bufferLen + 1
 		if goalLen > bufferCap {
 			goalLen = bufferCap - 1 // 2 items. so we can add one in the end
 		}
-		// flush entire buffer for numbers and at the last entry
+
+		// flush entire buffer if current word is a number
+		// (since numbers can't be part of bigger words [they can, but we assert so])
+		// or if the current word is the last entry
+		// Flush is done by setting goal to 0
 		if num != "" || index == len(allWords)-1 {
 			goalLen = 0
 		}
+		// Loop until the buffer is the goal size
 		// Make space in the circular buffer
+		// In each instance of the loop one element is popped
 		for bufferLen > goalLen {
+			// Try to combine word-parts into bigger words
+			// like "united states"
 			gobbleWord := ""
 			for i := 0; i < bufferLen; i++ {
 				if i != 0 {
@@ -45,26 +59,30 @@ func getComponents(sentence string) []*data.Word {
 				}
 				gobbleWord += buffer[(bufferStart+i)%bufferCap]
 			}
-			gobbleWord = strings.TrimSpace(gobbleWord)
-			// has the word abc.
-			wordObj := data.GetWord(gobbleWord)
+			gobbleWord = strings.TrimSpace(gobbleWord)	// gobbleWord = a b c
+			wordObj := data.GetWord(gobbleWord)	// is "a b c" a word?
 
-			if wordObj != nil { // then we've gobbled it.
+			if wordObj != nil { // Then "a b c" is one word
+				// then we've gobbled it.
 				bufferStart = 0
 				bufferLen = 0
-			} else {
+			} else {		// "a b c" is not one word. try just "a"
 				// then the word wasn't found.
 				// add the first word.
 				firstWord := strings.TrimSpace(buffer[bufferStart])
+				log.Info("First word is ", wordObj)
 				wordObj = data.GetWord(firstWord) // get just that word
 				if wordObj == nil {               // not found? meh. make one.
 					wordObj = &data.Word{Value: firstWord}
+					log.Info("Making up first word ", wordObj)
 				}
 				bufferStart = (bufferStart + 1) % bufferCap
 				bufferLen--
 			}
+			log.Info("Word object is ", wordObj)
 			selectedParts = append(selectedParts, wordObj)
 		}
+
 
 		// The circular buffer now is either size (capacity - 1) or 0
 		// now either add the word into the buffer or directly into the
@@ -89,11 +107,18 @@ func getComponents(sentence string) []*data.Word {
 			word = strings.TrimSpace(word)
 		}
 
+		// Add numbers and last-entries in right away
 		if num != "" || index == len(allWords)-1 {
+			log.Info("last word is ", word)
 			// then just add the word in now
-			wordObj := &data.Word{Value: strings.TrimSpace(strings.Replace(num, ",", "", -1))}
+			var wordObj *data.Word;
 			if num == "" {
-				wordObj = data.GetWord(word)
+				if wordObj = data.GetWord(word); wordObj == nil {
+					wordObj = &data.Word{Value: strings.TrimSpace(word)}
+					log.Info("Making up word ", wordObj)
+				}
+			} else {
+				wordObj = &data.Word{Value: strings.TrimSpace(strings.Replace(num, ",", "", -1))}
 			}
 			selectedParts = append(selectedParts, wordObj)
 		} else {

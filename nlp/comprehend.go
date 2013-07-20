@@ -6,12 +6,14 @@ import (
 )
 
 // TODO : Simplify this? If that's even possible...
+// Takes words and constructs a metric entry out of it
+// Precondition: len(parts) >= 1
 func buildRepresentation(parts []*data.Word) data.MetricEntry {
 	entry := data.MetricEntry{}
 	entry.Details = make([]data.MetricDetail, 0, 5)
 	// First, find the verb
 	for index, word := range parts {
-		if word.IsVerb == "1" {
+		if word.IsVerb == "1" && word.Value != "" {
 			if word.Infinitive != "" {
 				entry.Metric = word.Infinitive
 			} else {
@@ -20,6 +22,11 @@ func buildRepresentation(parts []*data.Word) data.MetricEntry {
 			parts[index] = nil
 			break
 		}
+	}
+	if entry.Metric == "" {
+		// I don't know what you're saying. 
+		// So I'm just going to assume the first word is the action. 
+		entry.Metric = parts[0].Value
 	}
 	// An action has been recognized. Lets find the details
 	temp := data.MetricDetail{}

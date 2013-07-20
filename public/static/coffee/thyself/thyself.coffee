@@ -22,8 +22,10 @@ $("#mEntryForm").submit( () ->
   newEntry = new Thyself.Models.Entry(); 
   if actionUrl == '/i/demo/m' 
     newEntry.url = '/i/demo/m'
+
+  descriptionField = $(this).find("#description")
   
-  entryFields = { description: $(this).find("#description").val(), time: Math.round(new Date().getTime() / 1000) }; 
+  entryFields = { description: descriptionField.val(), time: Math.round(new Date().getTime() / 1000) }; 
   newEntry.save(entryFields, { success: (entry) => 
     console.log(entry.toJSON()); 
     timeObj = new Date(entry.get("time") * 1000)
@@ -33,6 +35,7 @@ $("#mEntryForm").submit( () ->
     Thyself.Page.sidebarView.collection.add(newEntry)
     Thyself.Page.sidebarView.render()
   })
+  descriptionField.val("")
   return false;
 );
 

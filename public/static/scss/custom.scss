@@ -153,11 +153,8 @@ ul{
   margin-bottom: 0px;
 }
 
-#messagebox {
-  clear: both;
-}
 
-.sidebar, #messagebox, .alert-box {
+.sidebar, .alert-box {
   /*background-color: $color-secondary-bg-1;*/
   background-color: rgba(20, 18, 17, 0.98);
   border: 1px solid rgba(60, 54, 51, 0.58);
@@ -173,6 +170,15 @@ ul{
     border: none;
     border-top: 1px solid rgb(42, 32, 30);
     padding: 1.9375rem; 
+  }
+}
+
+#messagebox {
+  fieldset {
+    padding: 1.9375rem;
+    background-color: rgba(20, 18, 17, 0.98);
+    border: 1px solid rgba(60, 54, 51, 0.58);
+    color: white;
   }
 }
 
@@ -436,6 +442,12 @@ $light-color:230;
   margin:0.1rem;
 }
 
+/* Center a width-5 element */
+.center-5{
+  display: block;
+  margin-left:29.16%;
+}
+
 
 /*! Simple date picker - Modified from Karl Seguin jquery.simpleDatePicker*/
 .calendar{
@@ -539,10 +551,6 @@ $sidebar-curve: 4px;
     -o-border-bottom-left-radius: $sidebar-curve;
   }
 
-  #messagebox {
-    width:38%;
-    margin-left:31%;
-  }
 
   #journal_entry{
     min-height: 900px;

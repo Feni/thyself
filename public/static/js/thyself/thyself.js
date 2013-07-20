@@ -291,7 +291,7 @@
     EntryEditView.prototype.render = function() {
       var detailListElem, urlDate;
       urlDate = ("/u/" + (this.model.get('user_id'))) + ("/" + (this.model.get('time').getFullYear())) + ("/" + (this.model.get('time').getMonth() + 1)) + ("/" + (this.model.get('time').getDate()));
-      $(this.el).html("<a href=\"" + urlDate + "\"> <h2 class=\"date\">" + (this.model.get('time').toDateString()) + "</h2></a>\n  <input type=\"text\" class=\"editAction\" placeholder=\"Action\" maxlength=\"32\" value='" + (this.model.get("metric")) + "'/>\n  <input type=\"text\" class=\"editDescription\" placeholder=\"Description\" maxlength=\"160\" value='" + (this.model.get("description")) + "'/>\n<p class=\"time\">" + (this.model.get("time").toTimeString()) + "</p>\n</hr>");
+      $(this.el).html("<a href=\"" + urlDate + "\"> <h4 class=\"date\">" + (this.model.get('time').toDateString()) + "</h4></a>\n  <input type=\"text\" class=\"editAction\" placeholder=\"Action\" maxlength=\"32\" value='" + (this.model.get("metric")) + "'/>\n  <input type=\"text\" class=\"editDescription\" placeholder=\"Description\" maxlength=\"160\" value='" + (this.model.get("description")) + "'/>\n<p class=\"time\">" + (this.model.get("time").toTimeString()) + "</p>\n</hr>");
       detailListElem = $("<table class='width-full'>\n  <thead>\n  <tr>\n  <th class=\"fixed-width-3 column\">Amount</th>\n  <th class=\"fixed-width-3 column\">Type</th>\n  <th class=\"fixed-width-3 column\">Group</th>\n    </tr>\n    </thead>\n</table>");
       _(this.model.get("details").models).each(function(detail) {
         var detailView;
@@ -450,15 +450,16 @@
   });
 
   $("#mEntryForm").submit(function() {
-    var actionUrl, entryFields, newEntry,
+    var actionUrl, descriptionField, entryFields, newEntry,
       _this = this;
     actionUrl = $(this).attr('action');
     newEntry = new Thyself.Models.Entry();
     if (actionUrl === '/i/demo/m') {
       newEntry.url = '/i/demo/m';
     }
+    descriptionField = $(this).find("#description");
     entryFields = {
-      description: $(this).find("#description").val(),
+      description: descriptionField.val(),
       time: Math.round(new Date().getTime() / 1000)
     };
     newEntry.save(entryFields, {
@@ -473,6 +474,7 @@
         return Thyself.Page.sidebarView.render();
       }
     });
+    descriptionField.val("");
     return false;
   });
 

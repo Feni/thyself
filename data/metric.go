@@ -25,7 +25,7 @@ type MetricEntry struct {
 	Details []MetricDetail `json:"details"`
 }
 
-func AddMetric(user_id string, metric MetricEntry) {
+func AddMetric(user_id string, metric *MetricEntry) {
 	log.Info("data : Add Metric : ", metric, " : USER : ", user_id)
 	// (user_id, me_time, me_id, action, description, details)
 	_, err := SQL_ADD_METRIC.Exec(user_id, metric.ID, metric.UnixTime, metric.Metric, metric.Description)

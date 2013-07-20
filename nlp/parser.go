@@ -13,14 +13,18 @@ func preProc(sentence string) string {
 	return sentence
 }
 
-func Parse(sentence string) data.MetricEntry {
+func Parse(sentence string) *data.MetricEntry {
 	log.Info("nlp : parsing : " + sentence)
 	rawSentenec := sentence
 	sentence = preProc(sentence)
 	sentence = replaceNumbers(sentence)
 	log.Info("nlp : prepoc-num : " + sentence)
 	parts := getComponents(sentence)
-	structuredRep := buildRepresentation(parts)
-	structuredRep.Description = rawSentenec
-	return structuredRep
+	log.Info("nlp : parts : " , parts)
+	if len(parts) >= 1 {
+		structuredRep := buildRepresentation(parts)
+		structuredRep.Description = rawSentenec
+		return &structuredRep
+	}
+	return nil
 }

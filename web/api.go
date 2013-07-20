@@ -85,15 +85,17 @@ func CreateEntry(r *http.Request) *data.MetricEntry {
 	}
 	if metric.Description != "" {
 		structuredRep := nlp.Parse(metric.Description)
-		structuredRep.UnixTime = metric.UnixTime
-		structuredRep.ID = util.GenID(8)
-		user_id := GetLoggedInUser(r)
-		// id, unixTime and desc are already specified
-		if user_id != "" && structuredRep.Metric != "" {
-			structuredRep.User_ID = user_id
-			data.AddMetric(user_id, structuredRep) // TODO ; Uncomment
+		if structuredRep != nil {
+			structuredRep.UnixTime = metric.UnixTime
+			structuredRep.ID = util.GenID(8)
+			user_id := GetLoggedInUser(r)
+			// id, unixTime and desc are already specified
+			if user_id != "" && structuredRep.Metric != "" {
+				structuredRep.User_ID = user_id
+				data.AddMetric(user_id, structuredRep) // TODO ; Uncomment
+			}
+			return structuredRep			
 		}
-		return &structuredRep
 	}
 	// TODO: return metric?
 	return nil

@@ -29,7 +29,7 @@ func (e *MetricEntry) RenderJS() string {
 	detailsView += "])"
 	rendered := fmt.Sprintf(`new Thyself.Models.Entry({
 		"id": %s, 
-		"user": %s,
+		"user_id": %s,
 		"description": %s,
 		"time": new Date(%d * 1000),
 		"metric": %s,

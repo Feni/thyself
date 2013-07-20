@@ -119,13 +119,7 @@ func BuildMessages(w http.ResponseWriter, r *http.Request) string {
 		}
 	}
 	session.Save(r, w) // Is this necessary to just read the flashes?
-
-	//	fmt.Printf("All messages are : %s", allMessages)
-	if allMessages != "" {
-		return "<ul class='message_flashes'>" + allMessages + "</ul>"
-	} else {
-		return ""
-	}
+	return allMessages
 }
 
 const PrefetchExample = ` 

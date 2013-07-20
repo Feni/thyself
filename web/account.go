@@ -57,9 +57,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	// intentionally not else if. valid is set to false on failed registration above
 	if !valid {
-		errors := BuildMessages(w, r)
 		renderedPage := string(TemplateMessage.Render(map[string]string{
-			"message": errors + PartialRegisterForm}, nil))
+			"message": PartialRegisterForm, 
+			"flashes": BuildMessages(w, r)}, nil))
 		fmt.Fprintln(w, renderedPage)
 	}
 
@@ -88,9 +88,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if isAuth(r) {
 		HomepageHandler(w, r) // Homepage will redirect you to the journal page
 	} else {
-		errors := BuildMessages(w, r)
 		renderedPage := string(TemplateMessage.Render(map[string]string{
-			"message": errors + PartialLoginForm}, nil))
+			"message": PartialLoginForm, 
+			"flashes": BuildMessages(w, r)}, nil))
 		fmt.Fprintln(w, renderedPage)
 	}
 	//http.Redirect(w, r, "/", 302)
@@ -114,5 +114,4 @@ func GetLoggedInUser(r *http.Request) string {
 	} else {
 		return ""
 	}
-
 }
