@@ -259,6 +259,8 @@
 
       this.render = __bind(this.render, this);
 
+      this.addDetails = __bind(this.addDetails, this);
+
       this.save = __bind(this.save, this);
 
       this.initialize = __bind(this.initialize, this);
@@ -288,10 +290,14 @@
       return Thyself.Page.sidebarView.render();
     };
 
+    EntryEditView.prototype.addDetails = function() {
+      return alert("Adding new empty details");
+    };
+
     EntryEditView.prototype.render = function() {
-      var detailListElem, urlDate;
+      var addDetailsButton, deleteButton, detailListElem, entryControlsDiv, saveButton, urlDate;
       urlDate = ("/u/" + (this.model.get('user_id'))) + ("/" + (this.model.get('time').getFullYear())) + ("/" + (this.model.get('time').getMonth() + 1)) + ("/" + (this.model.get('time').getDate()));
-      $(this.el).html("<a href=\"" + urlDate + "\"> <h4 class=\"date\">" + (this.model.get('time').toDateString()) + "</h4></a>\n  <input type=\"text\" class=\"editAction\" placeholder=\"Action\" maxlength=\"32\" value='" + (this.model.get("metric")) + "'/>\n  <input type=\"text\" class=\"editDescription\" placeholder=\"Description\" maxlength=\"160\" value='" + (this.model.get("description")) + "'/>\n<p class=\"time\">" + (this.model.get("time").toTimeString()) + "</p>\n</hr>");
+      $(this.el).html("<a href=\"" + urlDate + "\"> <h4 class=\"date\">" + (this.model.get('time').toDateString()) + "</h4></a>\n  <input type=\"text\" class=\"editAction\" placeholder=\"Action\" maxlength=\"32\" value='" + (this.model.get("metric")) + "'/>\n  <!--<button class=\"flatButton\">Delete</button>  \n  <button class=\"flatButton\">Save</button>-->\n  <input type=\"text\" class=\"editDescription\" placeholder=\"Description\" maxlength=\"160\" value='" + (this.model.get("description")) + "'/>\n<p class=\"time\">" + (this.model.get("time").toTimeString()) + "</p>\n</hr>");
       detailListElem = $("<table class='width-full'>\n  <thead>\n  <tr>\n  <th class=\"fixed-width-3 column\">Amount</th>\n  <th class=\"fixed-width-3 column\">Type</th>\n  <th class=\"fixed-width-3 column\">Group</th>\n    </tr>\n    </thead>\n</table>");
       _(this.model.get("details").models).each(function(detail) {
         var detailView;
@@ -301,7 +307,14 @@
         return detailListElem.append(detailView.render().el);
       }, this);
       $(this.el).append(detailListElem);
-      $(this.el).append("<button>Add Details</button>");
+      addDetailsButton = $("<button class='flatButton'>Add Details</button>");
+      addDetailsButton.bind("click", this.addDetails);
+      entryControlsDiv = $("<div class='entryControls'>");
+      deleteButton = $("<button class='flatButton pad-1'>Delete</button>");
+      saveButton = $("<button class='flatButton pad-1'>Save</button>");
+      $(entryControlsDiv).append(deleteButton);
+      $(entryControlsDiv).append(saveButton);
+      $(this.el).append(entryControlsDiv);
       return this;
     };
 

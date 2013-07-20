@@ -23,6 +23,10 @@ $color-highlights-dblue: rgb(3,27,38);     /* cyan blue for sidebar highlights *
 
 $color-error: rgb(204,30,20);
 
+$std-padding: 1.9375rem;
+
+
+
 html, body { 
   height: 100%; 
   width: 100%; 
@@ -169,31 +173,45 @@ ul{
   fieldset{
     border: none;
     border-top: 1px solid rgb(42, 32, 30);
-    padding: 1.9375rem; 
+    padding: $std-padding; 
   }
 }
 
 #messagebox {
   fieldset {
-    padding: 1.9375rem;
+    padding: $std-padding;
     background-color: rgba(20, 18, 17, 0.98);
     border: 1px solid rgba(60, 54, 51, 0.58);
     color: white;
   }
 }
 
+
 #journal_entry{
-  padding-top: 4.8rem;
+  /*padding-top: 4.8rem;
   padding-bottom: 2.8rem;
   padding-left: 9.3%;
-  padding-right: 4.7%;
+  padding-right: 4.7%; */
   background-color: $color-primary-bg;
   color: $color-primary-fg;
   //background: url("/static/img/cream_dust.png");   
 
+
+  padding-top: $std-padding * 1.618;
+  padding-bottom: $std-padding * 1.618 * 2;
+  padding-left: $std-padding * 1.618 * 2; 
+  padding-right: $std-padding * 1.618;
+  /*background: url("/static/img/cream_dust.png");    */
+
+/*  padding-top: 5.556%; 
+  padding-left: 8.989%;
+  padding-right: 4.4945%; */
+  /* padding-left: 11.111%; */
+
+
   .introSubSection{
     font-family: $serif-heading-font-family;
-  }
+  }  
 }
 
 
@@ -241,6 +259,7 @@ $light-color:230;
 
 #journalEntryText { // text-area for journal entry
   overflow: auto;
+  width: 100%;
 }
 
 /* Buttons */
@@ -251,6 +270,13 @@ $light-color:230;
   font:normal 0.9375em $sans-font-family;  
   text-align: center;
   vertical-align: center;
+}
+
+.entryControls {
+  margin-top: 30px;
+  button {
+    float: right;
+  }
 }
 
 

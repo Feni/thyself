@@ -86,6 +86,8 @@ class Thyself.Views.EntryEditView extends Backbone.View
     if newDescription != @model.get("description")
       @model.set("description", newDescription)
     Thyself.Page.sidebarView.render()
+  addDetails: () =>
+    alert("Adding new empty details")
   render: () =>
     urlDate = "/u/#{@model.get('user_id')}" +   # define url from base. else it will append on exiting page url
       "/#{@model.get('time').getFullYear()}"+
@@ -95,6 +97,8 @@ class Thyself.Views.EntryEditView extends Backbone.View
     $(@el).html("""
       <a href="#{urlDate}"> <h4 class="date">#{@model.get('time').toDateString()}</h4></a>
         <input type="text" class="editAction" placeholder="Action" maxlength="32" value='#{@model.get("metric")}'/>
+        <!--<button class="flatButton">Delete</button>  
+        <button class="flatButton">Save</button>-->
         <input type="text" class="editDescription" placeholder="Description" maxlength="160" value='#{@model.get("description")}'/>
       <p class="time">#{@model.get("time").toTimeString()}</p>
       </hr>
@@ -112,8 +116,26 @@ class Thyself.Views.EntryEditView extends Backbone.View
       detailView = new DetailEditView({ model: detail });
       detailListElem.append(detailView.render().el);
     , @);
+
+
+
     $(@el).append(detailListElem)
-    $(@el).append("<button>Add Details</button>")
+    addDetailsButton = $("<button class='flatButton'>Add Details</button>")
+    addDetailsButton.bind("click", @addDetails)
+#    $(@el).append(addDetailsButton)
+    #$(@el).append("<hr>")
+    entryControlsDiv = $("<div class='entryControls'>")
+    deleteButton = $("<button class='flatButton pad-1'>Delete</button>")
+    saveButton = $("<button class='flatButton pad-1'>Save</button>")
+
+    
+    $(entryControlsDiv).append(deleteButton)
+    $(entryControlsDiv).append(saveButton)
+
+
+    $(@el).append(entryControlsDiv)
+
+
     return @
   unrender: () =>
     $(@el).remove();

@@ -1,7 +1,7 @@
 <a href="{{urlDate}}"> <h4 class="date">{{date}} </h4></a>
 
 <form id="journalEntryForm" action="{{urlDate}}" method="POST">
-	 <textarea id="journalEntryText" rows="20" cols="50" placeholder="How was your day?" name="text" maxlength="4000">{{journalText}}</textarea>
+	 <textarea id="journalEntryText" placeholder="How was your day?" name="text" maxlength="4000">{{journalText}}</textarea>
 	<input type="submit" class="flatButton" id="loginButton" value="Save" onClick="$('#journalEntryForm').submit(); return false;"/>
 </form>
 
