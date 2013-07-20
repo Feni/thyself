@@ -122,7 +122,7 @@ func BuildMessages(w http.ResponseWriter, r *http.Request) string {
 
 	//	fmt.Printf("All messages are : %s", allMessages)
 	if allMessages != "" {
-		return "<ul class='row message_flashes'>" + allMessages + "</ul>"
+		return "<ul class='message_flashes'>" + allMessages + "</ul>"
 	} else {
 		return ""
 	}

@@ -157,11 +157,11 @@ ul{
   clear: both;
 }
 
-
-.sidebar, #messagebox{
+.sidebar, #messagebox, .alert-box {
   /*background-color: $color-secondary-bg-1;*/
-  background-color: rgba(20, 18, 17, 0.98);   
-  margin-top: 3%;
+  background-color: rgba(20, 18, 17, 0.98);
+  border: 1px solid rgba(60, 54, 51, 0.58);
+  margin-top: 4%;
   color: $color-secondary-fg;
   overflow: hidden;
 
@@ -348,8 +348,9 @@ $light-color:230;
 }
 
 .message_flashes{
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: 1.9375rem;
+  padding-right: 1.9375rem;
+  margin-top: 7%;
 }
 
 .fullInput{
@@ -547,18 +548,10 @@ $sidebar-curve: 4px;
     min-height: 900px;
   }
 
-  .notifications {
-    
-  }
-
-  .message {
+  .alert-box {
     width: 100%;
-    margin-right: 0%;
-    margin-left: 0%
-
+    margin: inherit 0%;
   }
-
-
 }
 
 
@@ -589,60 +582,38 @@ $sidebar-curve: 4px;
     left: 0%;
   }  
 
-  .message {
+  .alert-box {
     width: 80%;
-    margin-left: 10%;    
+    margin-left: 10%; 
   }
 }
 
-
-/* Based on Alertify.js - Credit to Fabien Doiron */
-.notifications {
-  bottom: 10px;
-}
-
-.message {
-  background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.9);
+.alert-box {
   padding: 15px;
-  
   border-radius: 4px 4px 4px 4px;
-  color: rgb(255, 255, 255);
-  text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.5);
-  font-family: sans-serif;
-
-  display: block;
-  margin-top: 10px;
-  position: relative;
-
-  left: 0px;
   opacity: 1;
-}
+  margin-top: 5px;
+  font-family: $sans-font-family;
 
-
-.message{
   -moz-animation-name: slideMessage;
   -moz-animation-iteration-count: once;
   -moz-animation-timing-function: ease-in;
-  -moz-animation-duration: 0.5s;
+  -moz-animation-duration: 0.85s;
 
   -webkit-animation-name: slideMessage;
   -webkit-animation-iteration-count: once;
   -webkit-animation-timing-function: ease-in;
-  -webkit-animation-duration: 0.5s;
-}
-
-.message-success {
-  background-color: green;
+  -webkit-animation-duration: 1.5s;
 }
 
 @-moz-keyframes slideMessage {
     0% {
-        left: -300px;
-        opacity: 0;
+      margin-bottom: -55px;
+      opacity: 0;
     }
     100% {
-        left: 0px;
-        opacity: 1;
+      margin-bottom: 15px;
+      opacity: 1;
     }
 }
 
