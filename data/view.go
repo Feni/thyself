@@ -31,7 +31,7 @@ func (e *MetricEntry) RenderJS() string {
 		"id": %s, 
 		"user_id": %s,
 		"description": %s,
-		"time": new Date(%d * 1000),
+		"time": %d,
 		"metric": %s,
 		"details": %s})`, strconv.Quote(e.ID), strconv.Quote(e.User_ID), strconv.Quote(e.Description), 
 			e.UnixTime , strconv.Quote(e.Metric), detailsView)

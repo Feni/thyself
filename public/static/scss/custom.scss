@@ -1,6 +1,9 @@
 @import "_mintypeplate.scss";
 @import "foundation/foundation-global", "foundation/components/global";
 
+
+/* Shorthand: Top right bottom left */
+
 $sans-font-family: "lato", Arial, "Helvetica Neue", "Helvetica", Verdana, sans-serif; /* Sans for stats. It looks good as big numbers */
 $serif-heading-font-family: "Vollkorn", "Times", serif; /* For title text */
 $serif-sub-font-family: "PT Serif", "Times", "Times New Roman", "Vollkorn", serif; /* Good for body text */
@@ -9,21 +12,19 @@ $serif-sub-font-family: "PT Serif", "Times", "Times New Roman", "Vollkorn", seri
 $color-primary-bg: rgb(252, 252, 242);  // A tasteful light grey with a subtle hint of paper-yellow
 $color-primary-fg: #222;    // A nice soft dark-grey for body text (Journal)
 
-$color-secondary-bg-0: rgb(27, 29, 31);
-$color-secondary-bg-1: rgb(21, 23, 24);
-$color-secondary-bg-2: rgb(17, 19, 21);
-$color-secondary-bg-3: rgb(14, 16, 17);
+
+$color-dark-bg: rgb(21, 23, 24); 
 
 
-$color-secondary-fg: #DDDDDD;               /* Light greys for sidebar text */
-$color-secondary-fg-x: #EEEEEE; /* For highlights */
+$color-light-fg: #DDDDDD;               /* Light greys for sidebar text */
+$color-lighter-fg: #EEEEEE; /* For highlights */
 
 $color-highlights-lblue: rgb(3,54,73);  // Dark blue for highlights
 $color-highlights-dblue: rgb(3,27,38);     /* cyan blue for sidebar highlights */
 
 $color-error: rgb(204,30,20);
 
-$std-padding: 1.9375rem;
+$std-pad: 1.9375rem;
 
 
 
@@ -32,7 +33,7 @@ html, body {
   width: 100%; 
   margin: 0; 
   padding: 0;
-  background-color: $color-secondary-bg-1;  
+  background-color: $color-dark-bg; 
   background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
   //background: url("https://s3.amazonaws.com/ThyselfStatic/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
   
@@ -59,7 +60,7 @@ header{
   letter-spacing: normal;
   h1 {
     text-shadow: 3px 3px 3px rgb(20, 18, 17);
-    color: $color-secondary-fg-x;
+    color: $color-lighter-fg;
     margin-bottom: 0 !important;
   }
 }
@@ -102,13 +103,17 @@ textarea{
 
 a{
   text-decoration: none;
-  color: $color-highlights-lblue;
+  color: rgb(19, 30, 136); /* Google links = 17, 34, 204 */
 }
 
 /* Table styles - Based on bootstrap tables */
 table{
    border-collapse:collapse;
    border-spacing: 0px;
+}
+
+thead {
+  border-bottom: 7px solid rgba(0,0,0,0); /* Poor man's margins */
 }
 
 th{
@@ -122,7 +127,7 @@ th{
 }
 
 td{
-  padding: 8px;
+  padding: 0px;
   line-height: 20px;
   text-align: left;
   vertical-align: top;
@@ -163,29 +168,32 @@ ul{
   background-color: rgba(20, 18, 17, 0.98);
   border: 1px solid rgba(60, 54, 51, 0.58);
   margin-top: 4%;
-  color: $color-secondary-fg;
+  color: $color-light-fg;
   overflow: hidden;
 
   h3, h4, h5, h6{
-    color: $color-secondary-fg;
+    color: $color-light-fg;
   }  
 
   fieldset{
     border: none;
     border-top: 1px solid rgb(42, 32, 30);
-    padding: $std-padding; 
+    padding: $std-pad; 
   }
 }
 
 #messagebox {
   fieldset {
-    padding: $std-padding;
+    padding: $std-pad;
     background-color: rgba(20, 18, 17, 0.98);
     border: 1px solid rgba(60, 54, 51, 0.58);
     color: white;
   }
 }
 
+
+$dbl-pad: $std-pad * 1.618;
+$dbl-pad-pct: 4.1%; /* Equivalent value in percent, manually computed */
 
 #journal_entry{
   /*padding-top: 4.8rem;
@@ -196,11 +204,8 @@ ul{
   color: $color-primary-fg;
   //background: url("/static/img/cream_dust.png");   
 
+  padding: ($dbl-pad-pct) ($dbl-pad-pct * 1.618 ) ($dbl-pad-pct * 1.9) ($dbl-pad-pct * 1.9);
 
-  padding-top: $std-padding * 1.618;
-  padding-bottom: $std-padding * 1.618 * 2;
-  padding-left: $std-padding * 1.618 * 2; 
-  padding-right: $std-padding * 1.618;
   /*background: url("/static/img/cream_dust.png");    */
 
 /*  padding-top: 5.556%; 
@@ -212,8 +217,15 @@ ul{
   .introSubSection{
     font-family: $serif-heading-font-family;
   }  
+
+  .date {
+    margin-bottom: $std-pad;
+  }
 }
 
+.editAction {
+  max-width: 50%;
+}
 
 /* Misc style tweaks */
 $curve-radius:2.5px;
@@ -225,9 +237,9 @@ $curve-radius:2.5px;
 }
 
 .shaded {
-  -webkit-box-shadow: 0 0px 9px 1px rgba(0, 0, 0, .35);
-  -moz-box-shadow: 0 0px 9px 1px rgba(0, 0, 0, .35);
-  box-shadow: 0 0px 9px 1px rgba(0, 0, 0, .35);
+  -webkit-box-shadow: 0 0px 9px 1px rgba(0, 0, 0, .65);
+  -moz-box-shadow: 0 0px 9px 1px rgba(0, 0, 0, .65);
+  box-shadow: 0 0px 9px 1px rgba(0, 0, 0, .65);
 }
 
 $light-color:230;
@@ -266,7 +278,7 @@ $light-color:230;
 .flatButton {
   display: inline-block;  
   padding: 0.42rem 1.82rem 0.42rem 1.82rem;
-  margin: 0.8rem 0rem 0.8rem 0rem;
+  /*margin: 0.8rem 0rem 0.8rem 0rem; */
   font:normal 0.9375em $sans-font-family;  
   text-align: center;
   vertical-align: center;
@@ -586,6 +598,51 @@ $sidebar-curve: 4px;
     width: 100%;
     margin: inherit 0%;
   }
+
+  .desktop_share {
+    display: block;
+    margin-top: $std-pad;
+    text-align: center;
+    a {
+      display: inline-block;
+      font-family: $sans-font-family;
+      background-color: rgba(20, 18, 17, 0.95);
+      border: 1.6px solid rgba(20, 18, 17, 0.43);
+      color: rgb(210, 210, 210);
+
+      display: inline-block;
+      margin-left: $std-pad / 4;
+      margin-right: $std-pad / 4;
+      padding: (0.2rem) ($std-pad) (0.418rem) ($std-pad);
+
+      text-shadow: 1px 1px 2px rgb(10, 9, 8);
+      text-align: center;
+
+      font-size: 0.65rem;
+      b {
+        text-align: center;
+        font-size: 1rem;
+      /*  color: rgb(245, 245, 245); */
+      color: inherit;
+      }
+    }
+    .share_google{
+      color: rgb(199,53,37); 
+      box-shadow: inset 0px 1px 0px 0px rgba(255,100,70, 0.22);
+      text-shadow: 1px 1px 1.8px rgba(100,25,15, 0.82);
+    }
+    .share_fb {
+     color: rgb(59, 89, 152); 
+     box-shadow: inset 0px 1px 0px 0px rgba(118,156,199, 0.22);
+     text-shadow: 1px 1px 2.9px rgba(15,20,40, 0.82);
+    }
+    .share_twitter {
+      color: rgb(32, 148, 202);  /* rgb(2, 113, 191) */
+      box-shadow: inset 0px 1px 0px 0px rgba(64,200,255, 0.22);
+      text-shadow: 1px 1px 0.3px rgba(64,200,255, 0.12);
+    }
+  }
+
 }
 
 
@@ -619,6 +676,10 @@ $sidebar-curve: 4px;
   .alert-box {
     width: 80%;
     margin-left: 10%; 
+  }
+
+  .desktop_share {
+    display: none;
   }
 }
 
@@ -661,4 +722,5 @@ $sidebar-curve: 4px;
     }
 }
 */
+
 

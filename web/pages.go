@@ -129,7 +129,7 @@ const PrefetchExample = `
       "id": "XEScxaet",
       "user_id": "demo",
       "description": "I slept for 7.5 hours",
-      "time": new Date(1372195416 * 1000),
+      "time": 1372195416,
       "metric": "sleep",
       "details": new Thyself.Models.Details([
         new Thyself.Models.Detail({
@@ -142,7 +142,7 @@ const PrefetchExample = `
       "id": "oaOR5OlY",
       "user_id": "demo",
       "description": "I ran for 2.5 miles in 15 minutes",
-      "time": new Date(1372495416 * 1000),
+      "time": 1372495416,
       "metric": "run",
       "details": new Thyself.Models.Details([
         new Thyself.Models.Detail({
@@ -159,7 +159,7 @@ const PrefetchExample = `
       "id": "oQdR5OlY",
       "user_id": "demo",
       "description": "Washed half load of blue jeans at medium temperature",
-      "time": new Date(1372495418 * 1000),
+      "time": 1372495418,
       "metric": "laundry",
       "details": new Thyself.Models.Details([
       	new Thyself.Models.Detail({
@@ -183,7 +183,7 @@ const PrefetchExample = `
       "id": "7YRakSmr",
       "user_id": "demo",
       "description": "I ate 4 cookies",
-      "time": new Date(1372199416 * 1000),
+      "time": 1372199416,
       "metric": "eat",
       "details": new Thyself.Models.Details([
         new Thyself.Models.Detail({

@@ -44,12 +44,15 @@ func buildRepresentation(parts []*data.Word) data.MetricEntry {
 					temp.Amount = parts[index].Value // Store it as a string
 				} else if parts[index].IsNoun == "1" {
 					temp.Type = parts[index].Value
+
+					/*  // The auto-categorization feature is excluded for now. 
 					if parts[index].CategoryQuery != "" {
 						allCats := data.GetCategories(parts[index].CategoryQuery)
 						if len(allCats) > 0 {
 							temp.Group = allCats[0]
 						}
-					}
+					}*/
+
 					entry.Details = append(entry.Details, temp)
 					temp = data.MetricDetail{}
 				} else if temp.Amount != "" { // A quantity has been set. So add the unkown detail anyway

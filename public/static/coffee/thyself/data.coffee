@@ -13,19 +13,25 @@ class Thyself.Models.Entry extends Backbone.Model
     id: "",
     user_id: "",
     description: "",
-    time: new Date(), # May cause bugs
+    time: 0, # May cause bugs
     metric: "",
     details: new Thyself.Models.Details()
+  timeObj: () ->  # Calling this many times may be inefficient but whatever
+    if @get('time') == 0 
+      return new Date()
+    else  
+      return new Date(@get('time') * 1000)
   urlRoot: '/api/v0/entries'
   pageUrl: () ->
     # remove special chars and create a url our of description
     # g for global match. Else stop after first find
     cleanDesc = @get("description").replace(
      new RegExp("\\s","g"),"-").replace( new RegExp("[^A-Za-z0-9_-]", "g"), "-").slice(0, 80)    
+    tempTimeObj = @timeObj()
     modelUrl = "/u/#{@get('user_id')}" +   # define url from base. else it will append on exiting page url
-      "/#{@get('time').getFullYear()}"+
-      "/#{@get('time').getMonth() + 1}" +
-      "/#{@get('time').getDate()}" +
+      "/#{tempTimeObj.getFullYear()}"+
+      "/#{tempTimeObj.getMonth() + 1}" +
+      "/#{tempTimeObj.getDate()}" +
       "/m/#{$.trim(@get('metric'))}" +
       "/e/#{@get('id')}"+
       "/#{$.trim(cleanDesc)}"

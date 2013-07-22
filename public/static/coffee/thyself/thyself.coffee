@@ -2,10 +2,10 @@
 $(document).delegate "a", "click", (event) -> 
   # Get the anchor href and protcol
   href = $(this).attr("href");
-  protocol = this.protocol + "//";  # http://
+  #protocol = this.protocol + "//";  # http://
   # Ensure the protocol is not part of URL, meaning its relative.
   if !event.altKey and !event.ctrlKey and !event.metaKey and !event.shiftKey
-    if href.slice(protocol.length) != protocol and href.substring(0, 1) != '#'
+    if href.substring(0, 1) == '/'  # only catch urls starting with /. abs urls are treated normally
       # Try to render the page
       Thyself.router.navigate href, { trigger: true }
       # If content could not be loaded by JS, force a server side reload
@@ -28,8 +28,8 @@ $("#mEntryForm").submit( () ->
   entryFields = { description: descriptionField.val(), time: Math.round(new Date().getTime() / 1000) }; 
   newEntry.save(entryFields, { success: (entry) => 
     console.log(entry.toJSON()); 
-    timeObj = new Date(entry.get("time") * 1000)
-    entry.set("time", timeObj )
+    #timeObj = new Date(entry.get("time") * 1000)
+    #entry.set("time", timeObj )
     detailsCollection = new Thyself.Models.Details(entry.get("details"))
     entry.set("details", detailsCollection)
     Thyself.Page.sidebarView.collection.add(newEntry)
