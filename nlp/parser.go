@@ -20,7 +20,7 @@ func Parse(sentence string) *data.MetricEntry {
 	sentence = replaceNumbers(sentence)
 	log.Info("nlp : prepoc-num : " + sentence)
 	parts := getComponents(sentence)
-	log.Info("nlp : parts : " , parts)
+	//log.Info("nlp : parts : " , parts)
 	if len(parts) >= 1 {
 		structuredRep := buildRepresentation(parts)
 		structuredRep.Description = rawSentenec

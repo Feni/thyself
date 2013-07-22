@@ -14,6 +14,7 @@ $color-primary-fg: #222;    // A nice soft dark-grey for body text (Journal)
 
 
 $color-dark-bg: rgb(21, 23, 24); 
+$color-dark-bg-semi: rgba(20, 18, 17, 0.98);
 
 
 $color-light-fg: #DDDDDD;               /* Light greys for sidebar text */
@@ -204,7 +205,8 @@ $dbl-pad-pct: 4.1%; /* Equivalent value in percent, manually computed */
   color: $color-primary-fg;
   //background: url("/static/img/cream_dust.png");   
 
-  padding: ($dbl-pad-pct) ($dbl-pad-pct * 1.618 ) ($dbl-pad-pct * 1.9) ($dbl-pad-pct * 1.9);
+  /*padding: ($dbl-pad-pct) ($dbl-pad-pct * 1.618 ) ($dbl-pad-pct * 1.9) ($dbl-pad-pct * 1.9); */
+  padding: 7% 11.5% 9% 13.5%;
 
   /*background: url("/static/img/cream_dust.png");    */
 
@@ -221,6 +223,37 @@ $dbl-pad-pct: 4.1%; /* Equivalent value in percent, manually computed */
   .date {
     margin-bottom: $std-pad;
   }
+}
+
+#journal_footer {
+    display: block;
+    margin-top: $std-pad;
+    text-align: center;
+    width: 80%;
+    margin-left: 10%;
+  
+    a {
+      display: inline-block;
+      font-family: $sans-font-family;
+      font-size: 1rem;      
+      background-color: rgb(20, 18, 17);
+      border: .6px solid rgba(10, 9, 8, 0.83);
+      color: white;
+      text-shadow: 2px 2px 2px black;      
+      margin: 0px $std-pad / 2;
+      padding: (0.2rem) ($std-pad) (0.418rem) ($std-pad);
+      text-align: center;
+
+    }
+    
+    .footer_btn{
+      box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, 0.42);
+    }
+
+
+
+
+
 }
 
 .editAction {
@@ -272,6 +305,7 @@ $light-color:230;
 #journalEntryText { // text-area for journal entry
   overflow: auto;
   width: 100%;
+  min-height: 750px;
 }
 
 /* Buttons */
@@ -487,6 +521,7 @@ $light-color:230;
 }
 
 
+
 /*! Simple date picker - Modified from Karl Seguin jquery.simpleDatePicker*/
 .calendar{
   border:1px solid #aaa;
@@ -599,6 +634,12 @@ $sidebar-curve: 4px;
     margin: inherit 0%;
   }
 
+  .right-6{
+  display: block;
+  margin-left: 46%; /* 50 - (8.333 / 2) */
+}
+
+
   .desktop_share {
     display: block;
     margin-top: $std-pad;
@@ -606,40 +647,47 @@ $sidebar-curve: 4px;
     a {
       display: inline-block;
       font-family: $sans-font-family;
-      background-color: rgba(20, 18, 17, 0.95);
-      border: 1.6px solid rgba(20, 18, 17, 0.43);
-      color: rgb(210, 210, 210);
-
-      display: inline-block;
-      margin-left: $std-pad / 4;
-      margin-right: $std-pad / 4;
+      font-size: 0.65rem;      
+      background-color: rgb(20, 18, 17);
+      border: .6px solid rgba(10, 9, 8, 0.83);
+      color: white;
+      margin: 0px $std-pad / 2;
       padding: (0.2rem) ($std-pad) (0.418rem) ($std-pad);
-
-      text-shadow: 1px 1px 2px rgb(10, 9, 8);
       text-align: center;
 
-      font-size: 0.65rem;
+
       b {
         text-align: center;
         font-size: 1rem;
+        text-shadow: 2px 2px 2px black;
       /*  color: rgb(245, 245, 245); */
-      color: inherit;
+        color: inherit;
       }
     }
     .share_google{
-      color: rgb(199,53,37); 
+      border-bottom:3px solid rgba(199,53,37, 0.8); 
       box-shadow: inset 0px 1px 0px 0px rgba(255,100,70, 0.22);
-      text-shadow: 1px 1px 1.8px rgba(100,25,15, 0.82);
+      b {
+        color: rgb(199,53,37);
+      }
+      /* text-shadow: 1px 1px 1.8px rgba(100,25,15, 0.82); */
     }
     .share_fb {
-     color: rgb(59, 89, 152); 
+     border-bottom:3px solid rgba(59,89,152, 0.8); 
      box-shadow: inset 0px 1px 0px 0px rgba(118,156,199, 0.22);
-     text-shadow: 1px 1px 2.9px rgba(15,20,40, 0.82);
+     b {
+      color: rgb(59,89,152);
+     }
+     /*text-shadow: 1px 1px 2.9px rgba(15,20,40, 0.82); */
     }
     .share_twitter {
-      color: rgb(32, 148, 202);  /* rgb(2, 113, 191) */
+      border-bottom:3px solid rgba(32,148,202, 0.8);  /* rgb(2, 113, 191) */
       box-shadow: inset 0px 1px 0px 0px rgba(64,200,255, 0.22);
-      text-shadow: 1px 1px 0.3px rgba(64,200,255, 0.12);
+      /* text-shadow: 1px 1px 0.3px rgba(64,200,255, 0.12); */
+      b {
+        color: rgb(32,148,202);
+      }
+      
     }
   }
 
