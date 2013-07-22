@@ -49,7 +49,7 @@ class DetailEditView extends Backbone.View
   tagName: "tr"
   initialize: () =>
     $(@el).unbind(); # Remove attachments to previous renderings
-    #$(@el).bind('change', @save);    
+    $(@el).bind('save', @save);    
   save: () =>
     newAmount = $.trim($(@el).find(".detailAmount").val())
     newType = $.trim($(@el).find(".detailType").val())
@@ -60,8 +60,8 @@ class DetailEditView extends Backbone.View
       @model.set("type", newType)
     if newGroup != @model.get("group")
       @model.set("group", newGroup)
-
   render: () =>
+    $(@el).addClass("detailRow")
     $(@el).html("""
         <td class="fixed-width-3 column"><input type="text" class="detailAmount fullInput" maxlength="32" value='#{@model.get("amount")}'/></td>
         <td class="fixed-width-3 column"><input type="text" class="detailType fullInput" maxlength="120" value='#{@model.get("type")}'/></td>
@@ -72,6 +72,9 @@ class DetailEditView extends Backbone.View
 
 class DetailsListEditView extends Backbone.View
   tagName: "table"
+  initialize: () =>
+    #$(@el).unbind(); # Remove attachments to previous renderings
+    #$(@el).bind('save', @save);
   addDetailsTypeChanged: () =>
     #alert("Type field changed. Adding extra detail")
     tempRow = $(@el).find("#tempRow")
@@ -92,6 +95,7 @@ class DetailsListEditView extends Backbone.View
   render: () =>
     $(@el).html("")
     $(@el).addClass("width-full")
+    $(@el).addClass("dataSummaryTable")
     $(@el).append("""<thead>
         <tr>
           <th class="fixed-width-3 column">Amount</th>
@@ -117,15 +121,20 @@ class Thyself.Views.EntryEditView extends Backbone.View
     $(@el).unbind(); # Remove attachments to previous renderings
     #$(@el).bind('change', @save);
   save: () =>
-    newAction = $.trim($(@el).find(".editAction").text())
-    newDescription = $.trim($(@el).find(".editDescription").text())
-    if newAction != ""
-      @model.set("metric", newAction)
-    else
-      $(@el).find(".editAction").text(@model.get("metric"))
-    if newDescription != @model.get("description")
-      @model.set("description", newDescription)
-    @model.save()
+    newAction = $.trim($(@el).find(".editAction").val())
+    newDescription = $.trim($(@el).find(".editDescription").val())
+    $(@el).find(".detailRow").trigger("save")
+    @model.save({
+        id: @model.get('id')
+      }, 
+      success: (model, response) =>
+        alert("Success happens here")
+      error: (model, response) =>
+        alert("error happens here ")
+        console.log(response)
+        console.log(model)
+    )
+    $(@el).find(".editAction").val(@model.get("metric"))
     Thyself.Page.sidebarView.render()
 
   render: () =>

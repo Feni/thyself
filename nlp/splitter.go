@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 	"thyself/data"
-	"thyself/log"
 )
 
 var r_quoted, _ = regexp.Compile(`("[^"]*")`)
@@ -70,16 +69,13 @@ func getComponents(sentence string) []*data.Word {
 				// then the word wasn't found.
 				// add the first word.
 				firstWord := strings.TrimSpace(buffer[bufferStart])
-				log.Info("First word is ", wordObj)
 				wordObj = data.GetWord(firstWord) // get just that word
 				if wordObj == nil {               // not found? meh. make one.
 					wordObj = &data.Word{Value: firstWord}
-					log.Info("Making up first word ", wordObj)
 				}
 				bufferStart = (bufferStart + 1) % bufferCap
 				bufferLen--
 			}
-			log.Info("Word object is ", wordObj)
 			selectedParts = append(selectedParts, wordObj)
 		}
 
@@ -109,13 +105,11 @@ func getComponents(sentence string) []*data.Word {
 
 		// Add numbers and last-entries in right away
 		if num != "" || index == len(allWords)-1 {
-			log.Info("last word is ", word)
 			// then just add the word in now
 			var wordObj *data.Word;
 			if num == "" {
 				if wordObj = data.GetWord(word); wordObj == nil {
 					wordObj = &data.Word{Value: strings.TrimSpace(word)}
-					log.Info("Making up word ", wordObj)
 				}
 			} else {
 				wordObj = &data.Word{Value: strings.TrimSpace(strings.Replace(num, ",", "", -1))}

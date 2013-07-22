@@ -3,6 +3,9 @@ class Thyself.Models.Detail extends Backbone.Model
     amount: "",
     type: "",
     group: ""
+  validate: (attrs, options) ->
+    if attrs.type == ""
+      return "Detail's type field cannot be empty"
 
 class Thyself.Models.Details extends Backbone.Collection
   model: Thyself.Models.Detail
@@ -16,6 +19,15 @@ class Thyself.Models.Entry extends Backbone.Model
     time: 0, # May cause bugs
     metric: "",
     details: new Thyself.Models.Details()
+  validate: (attrs, options) -> 
+    if attrs.user_id == "" 
+      return "User_ID can't be null"
+    if attrs.metric == "" 
+      return "Metric can't be null"
+    #if attrs.time  is not a number
+    
+  
+
   timeObj: () ->  # Calling this many times may be inefficient but whatever
     if @get('time') == 0 
       return new Date()

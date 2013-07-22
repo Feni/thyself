@@ -7,6 +7,7 @@ import (
 	"strings"
 	"thyself/log"
 	"time"
+	"strconv"
 )
 
 type MetricDetail struct {
@@ -41,6 +42,20 @@ func AddMetric(user_id string, metric *MetricEntry) {
 		}
 	} else {
 		log.Debug(err, "DATA : Metric : Insertion : FAILED ")
+	}
+}
+
+func DeleteMetric(user_id, metric_id string){
+	_, err := SQL_DELETE_ME.Exec(user_id, metric_id)
+	log.Debug(err, "DATA: Delete metric FAILED ")
+	
+}
+
+// For now just delete the old metric and re-add it
+func UpdateMetric(metric *MetricEntry) {
+	if metric.ID != "" && metric.User_ID != "" {
+		DeleteMetric(metric.User_ID, metric.ID)
+		AddMetric(metric.User_ID, metric)
 	}
 }
 
@@ -100,4 +115,38 @@ func (e *MetricEntry) GetEntryURL() string {
 	}
 	entryUrl := e.GetMetricURL() + "/e/" + e.ID + "/" + strings.TrimSpace(cleanDesc)
 	return entryUrl
+}
+
+
+func (e *MetricEntry) Validate() (bool, string){
+	if len(e.ID) != 8 {
+		return false, "Invalid Entry ID. Must be a string of length 8"
+	}
+	if len(e.User_ID) != 5 {
+		return false, "Invalid User ID. Must be a string of length 5"
+	}
+	if e.UnixTime == 0 {
+		return false, "Invalid Time. Not defined."
+	}
+	if e.Metric == "" {
+		return false, "Invalid Metric. Not defined."
+	}
+	if len(e.Description) > 160 {
+		return false, "Invalid Description. Max length is 160 chars"	
+	}
+	for _, detail := range e.Details {	
+		if detail.Amount != ""{ // If a string is defined, it must be a number
+			_, err := strconv.ParseFloat(detail.Amount, 64)
+			if err != nil{
+				return false, "Amount must be a float"
+			}
+		}
+		if len(detail.Group) > 32{
+			return false, "Max group name length is 32"
+		}
+		if detail.Type == "" || len(detail.Type) > 160{
+			return false, "Detail type must be defined and be < 160 chars"
+		}
+	}
+	return true, ""
 }

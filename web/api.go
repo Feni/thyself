@@ -74,7 +74,9 @@ func EntryItemHandler(w http.ResponseWriter, r *http.Request) {
 			// TODO : retrieve a specific metric
 			log.Info("Is get method")
 		}
-		case "PUT" : { // Update 
+		case "PUT": { // Update 
+			// Check if the user is the owner of this entry
+
 			// Update that specific metric
 			log.Info("Got API request for entry id ", entry_id)
 			var metric data.MetricEntry
@@ -86,10 +88,30 @@ func EntryItemHandler(w http.ResponseWriter, r *http.Request) {
 				log.Debug(err, "ERROR; body Unmarhsall error ")
 			}
 			log.Info("Unmarshalled api request body ", metric)
+
+			if GetLoggedInUser(r) == metric.User_ID {
+				valid, errMsg := metric.Validate()
+				if valid{
+					log.Info("Auth matches and data is valid. Updating ", metric)
+					data.UpdateMetric(&metric)
+					/* TODO: 
+					maybe return string(body) Make sure this isn't a security risk 
+					I get a bad feeling returning user defined stuff...
+					*/
+					fmt.Fprintln(w, "{}" )
+				}else {
+					log.Info("Update failed. Error is " + errMsg )
+					http.Error(w, "400 : Baaaddd Request!! " + errMsg, 400) // Client error
+				}
+			}else {
+				http.Error(w, "401 : Unauthorized!! Login before you send a request", 400)
+			}
+		}
+		case "DELETE":{
+			data.DeleteMetric(GetLoggedInUser(r), entry_id)
 		}
 		}
 	}
-
 }
 
 func CreateEntry(r *http.Request) *data.MetricEntry {
@@ -118,7 +140,7 @@ func CreateEntry(r *http.Request) *data.MetricEntry {
 				structuredRep.User_ID = user_id
 				data.AddMetric(user_id, structuredRep) // TODO ; Uncomment
 			}
-			return structuredRep			
+			return structuredRep
 		}
 	}
 	// TODO: return metric?

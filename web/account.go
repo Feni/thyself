@@ -27,7 +27,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	valid := true
 
-	fmt.Printf("Email is %s (%s) , pass is %s - re %s \n", email, ValidateEmail(email), password, repass)
+
 	if !ValidatePassword(password) {
 		session.AddFlash("alert : Password must be atleast 6 letters long")
 		valid = false

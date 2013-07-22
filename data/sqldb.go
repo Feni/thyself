@@ -34,6 +34,8 @@ var SQL_RETRIEVE_JE, Sql_get_je_err = sqldb.Prepare("SELECT EXTRACT(EPOCH FROM(j
 var SQL_ADD_JE, Sql_add_je_err = sqldb.Prepare("INSERT INTO journal_entries (user_id, je_time, je_text) VALUES ($1, to_timestamp($2), $3)")
 var SQL_UPDATE_JE, Sql_update_je_err = sqldb.Prepare("UPDATE journal_entries SET je_time=to_timestamp($1), je_text=$2 WHERE user_id=$3 AND je_time BETWEEN to_timestamp($4) AND to_timestamp($5)")
 
+var SQL_DELETE_ME, Sql_delete_me_err = sqldb.Prepare("DELETE from metric_entries where user_id=$1 AND me_id=$2")
+
 func SqlInit() {
 	log.Debug(Sqlconn_err, "  Database connection error ")
 	log.Debug(Sql_create_err, "  Sql Error create user: ")
@@ -47,4 +49,6 @@ func SqlInit() {
 	log.Debug(Sql_get_je_err, "  Sql get journal entry: ")
 	log.Debug(Sql_add_je_err, "  Sql add journal entry: ")
 	log.Debug(Sql_update_je_err, "  Sql update journal entry: ")
+	log.Debug(Sql_delete_me_err, "  Sql delete metric entry: ")
+	
 }

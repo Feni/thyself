@@ -38,7 +38,7 @@ func initServer() {
 	apiRouter := globalRouter.PathPrefix("/api/v0/").Subrouter()
 	apiRouter.HandleFunc("/entries", web.EntryListHandler)
 	apiRouter.HandleFunc("/entries/", web.EntryListHandler)
-	apiRouter.HandleFunc("/entries/{entry_id}", web.EntryListHandler)
+	apiRouter.HandleFunc("/entries/{entry_id}", web.EntryItemHandler)
 
 	//	Queries("key", "value")
 	http.Handle("/", globalRouter)

@@ -19,6 +19,12 @@
       group: ""
     };
 
+    Detail.prototype.validate = function(attrs, options) {
+      if (attrs.type === "") {
+        return "Detail's type field cannot be empty";
+      }
+    };
+
     return Detail;
 
   })(Backbone.Model);
@@ -52,6 +58,15 @@
       time: 0,
       metric: "",
       details: new Thyself.Models.Details()
+    };
+
+    Entry.prototype.validate = function(attrs, options) {
+      if (attrs.user_id === "") {
+        return "User_ID can't be null";
+      }
+      if (attrs.metric === "") {
+        return "Metric can't be null";
+      }
     };
 
     Entry.prototype.timeObj = function() {
@@ -256,7 +271,8 @@
     DetailEditView.prototype.tagName = "tr";
 
     DetailEditView.prototype.initialize = function() {
-      return $(this.el).unbind();
+      $(this.el).unbind();
+      return $(this.el).bind('save', this.save);
     };
 
     DetailEditView.prototype.save = function() {
@@ -276,6 +292,7 @@
     };
 
     DetailEditView.prototype.render = function() {
+      $(this.el).addClass("detailRow");
       $(this.el).html("<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailAmount fullInput\" maxlength=\"32\" value='" + (this.model.get("amount")) + "'/></td>\n<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailType fullInput\" maxlength=\"120\" value='" + (this.model.get("type")) + "'/></td>\n<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailGroup fullInput\" maxlength=\"32\" value='" + (this.model.get("group")) + "'/></td>\n<td class=\"fixed-width-2 tblBtnCol column\"><button class=\"\">Delete</button></td>");
       return this;
     };
@@ -294,10 +311,14 @@
       this.tempDetails = __bind(this.tempDetails, this);
 
       this.addDetailsTypeChanged = __bind(this.addDetailsTypeChanged, this);
+
+      this.initialize = __bind(this.initialize, this);
       return DetailsListEditView.__super__.constructor.apply(this, arguments);
     }
 
     DetailsListEditView.prototype.tagName = "table";
+
+    DetailsListEditView.prototype.initialize = function() {};
 
     DetailsListEditView.prototype.addDetailsTypeChanged = function() {
       var tempRow;
@@ -323,6 +344,7 @@
     DetailsListEditView.prototype.render = function() {
       $(this.el).html("");
       $(this.el).addClass("width-full");
+      $(this.el).addClass("dataSummaryTable");
       $(this.el).append("<thead>\n  <tr>\n    <th class=\"fixed-width-3 column\">Amount</th>\n    <th class=\"fixed-width-3 column\">Type</th>\n    <th class=\"fixed-width-3 column\">Group</th>\n  </tr>\n</thead>");
       _(this.collection.models).each(function(detail) {
         var detailView;
@@ -361,18 +383,24 @@
     };
 
     EntryEditView.prototype.save = function() {
-      var newAction, newDescription;
-      newAction = $.trim($(this.el).find(".editAction").text());
-      newDescription = $.trim($(this.el).find(".editDescription").text());
-      if (newAction !== "") {
-        this.model.set("metric", newAction);
-      } else {
-        $(this.el).find(".editAction").text(this.model.get("metric"));
-      }
-      if (newDescription !== this.model.get("description")) {
-        this.model.set("description", newDescription);
-      }
-      this.model.save();
+      var newAction, newDescription,
+        _this = this;
+      newAction = $.trim($(this.el).find(".editAction").val());
+      newDescription = $.trim($(this.el).find(".editDescription").val());
+      $(this.el).find(".detailRow").trigger("save");
+      this.model.save({
+        id: this.model.get('id')
+      }, {
+        success: function(model, response) {
+          return alert("Success happens here");
+        },
+        error: function(model, response) {
+          alert("error happens here ");
+          console.log(response);
+          return console.log(model);
+        }
+      });
+      $(this.el).find(".editAction").val(this.model.get("metric"));
       return Thyself.Page.sidebarView.render();
     };
 
