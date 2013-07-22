@@ -58,4 +58,14 @@ class Thyself.Models.Entries extends Backbone.Collection
       group[myGroup][myType].push(line)
     return group
 
-
+class Thyself.Models.JournalEntry extends Backbone.Model
+  defaults:
+    user_id: "",
+    text: "",
+    time: 0 # May cause bugs
+  timeObj: () ->  # Calling this many times may be inefficient but whatever
+    if @get('time') == 0 
+      return new Date()
+    else  
+      return new Date(@get('time') * 1000)
+  

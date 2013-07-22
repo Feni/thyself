@@ -134,6 +134,8 @@ class Thyself.Views.EntryEditView extends Backbone.View
       "/#{timeObj.getFullYear()}"+
       "/#{timeObj.getMonth() + 1}" +
       "/#{timeObj.getDate()}"
+    if @model.get('user_id') == "demo"
+      urlDate = "/i/demo"
 
     $(@el).html("""
       <a href="#{urlDate}"> <h4 class="date">#{timeObj.toDateString()}</h4></a>
@@ -184,13 +186,27 @@ class Thyself.Views.SettingsView extends Backbone.View
 
 class Thyself.Views.JournalView extends Backbone.View
   el: $("#journal_entry")
-  initialize: (user, year, month, day) ->
-    @user = user
-    @year = year
-    @month = month
-    @day = day
-    @render()
+#  initialize: (user, year, month, day) ->
+#    @user = user
+#    @year = year
+#    @month = month
+#    @day = day
+#    @render()
   render: () ->
-    $(@el).html("Journal Entry for ")
-
+    if @model
+      timeObj = @model.timeObj()
+      urlDate = "/u/#{@model.get('user_id')}" +   # define url from base. else it will append on exiting page url
+        "/#{timeObj.getFullYear()}"+
+        "/#{timeObj.getMonth() + 1}" +
+        "/#{timeObj.getDate()}"
+      if @model.get('user_id') == "demo"
+        urlDate = "/i/demo"
+      $(@el).html("""<a href="#{urlDate}"> <h4 class="date">#{timeObj.toDateString()}</h4></a>
+    <form id="journalEntryForm" action="#{urlDate}" method="POST">
+       <textarea id="journalEntryText" placeholder="How was your day?" name="text" maxlength="4000">#{@model.get("text")}</textarea>
+      <input type="submit" class="flatButton" id="loginButton" value="Save" onClick="$('#journalEntryForm').submit(); return false;"/>
+    </form>
+    """)
+    else
+      $(@el).html("")
 

@@ -5,7 +5,7 @@ $(document).delegate "a", "click", (event) ->
   #protocol = this.protocol + "//";  # http://
   # Ensure the protocol is not part of URL, meaning its relative.
   if !event.altKey and !event.ctrlKey and !event.metaKey and !event.shiftKey
-    if href.substring(0, 1) == '/' && href.substring(0,3) != "/a/"  # only catch urls starting with /. abs urls are treated normally
+    if href.substring(0, 1) == '/' && href.substring(0,3) != "/a/" && href != "/"  # only catch urls starting with /. abs urls are treated normally
       # Try to render the page
       Thyself.router.navigate href, { trigger: true }
       # If content could not be loaded by JS, force a server side reload

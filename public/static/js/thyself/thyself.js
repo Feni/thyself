@@ -118,6 +118,32 @@
 
   })(Backbone.Collection);
 
+  Thyself.Models.JournalEntry = (function(_super) {
+
+    __extends(JournalEntry, _super);
+
+    function JournalEntry() {
+      return JournalEntry.__super__.constructor.apply(this, arguments);
+    }
+
+    JournalEntry.prototype.defaults = {
+      user_id: "",
+      text: "",
+      time: 0
+    };
+
+    JournalEntry.prototype.timeObj = function() {
+      if (this.get('time') === 0) {
+        return new Date();
+      } else {
+        return new Date(this.get('time') * 1000);
+      }
+    };
+
+    return JournalEntry;
+
+  })(Backbone.Model);
+
   DetailSummaryView = (function(_super) {
 
     __extends(DetailSummaryView, _super);
@@ -354,6 +380,9 @@
       var deleteButton, entryControlsDiv, saveButton, timeObj, urlDate;
       timeObj = this.model.timeObj();
       urlDate = ("/u/" + (this.model.get('user_id'))) + ("/" + (timeObj.getFullYear())) + ("/" + (timeObj.getMonth() + 1)) + ("/" + (timeObj.getDate()));
+      if (this.model.get('user_id') === "demo") {
+        urlDate = "/i/demo";
+      }
       $(this.el).html("<a href=\"" + urlDate + "\"> <h4 class=\"date\">" + (timeObj.toDateString()) + "</h4></a>\n  <input type=\"text\" class=\"editAction\" placeholder=\"Action\" maxlength=\"32\" value='" + (this.model.get("metric")) + "'/>\n  <!--<button class=\"flatButton\">Delete</button>  \n  <button class=\"flatButton\">Save</button>-->\n  <input type=\"text\" class=\"fullInput editDescription\" placeholder=\"Description\" maxlength=\"160\" value='" + (this.model.get("description")) + "'/>\n<p class=\"time\">" + (timeObj.toTimeString()) + "</p>\n</hr>");
       $(this.el).append(new DetailsListEditView({
         collection: this.model.get("details")
@@ -427,16 +456,18 @@
 
     JournalView.prototype.el = $("#journal_entry");
 
-    JournalView.prototype.initialize = function(user, year, month, day) {
-      this.user = user;
-      this.year = year;
-      this.month = month;
-      this.day = day;
-      return this.render();
-    };
-
     JournalView.prototype.render = function() {
-      return $(this.el).html("Journal Entry for ");
+      var timeObj, urlDate;
+      if (this.model) {
+        timeObj = this.model.timeObj();
+        urlDate = ("/u/" + (this.model.get('user_id'))) + ("/" + (timeObj.getFullYear())) + ("/" + (timeObj.getMonth() + 1)) + ("/" + (timeObj.getDate()));
+        if (this.model.get('user_id') === "demo") {
+          urlDate = "/i/demo";
+        }
+        return $(this.el).html("<a href=\"" + urlDate + "\"> <h4 class=\"date\">" + (timeObj.toDateString()) + "</h4></a>\n<form id=\"journalEntryForm\" action=\"" + urlDate + "\" method=\"POST\">\n   <textarea id=\"journalEntryText\" placeholder=\"How was your day?\" name=\"text\" maxlength=\"4000\">" + (this.model.get("text")) + "</textarea>\n  <input type=\"submit\" class=\"flatButton\" id=\"loginButton\" value=\"Save\" onClick=\"$('#journalEntryForm').submit(); return false;\"/>\n</form>");
+      } else {
+        return $(this.el).html("");
+      }
     };
 
     return JournalView;
@@ -448,6 +479,8 @@
     __extends(ThyselfRouter, _super);
 
     function ThyselfRouter() {
+      this.demoMain = __bind(this.demoMain, this);
+
       this.journal = __bind(this.journal, this);
 
       this.settings = __bind(this.settings, this);
@@ -459,6 +492,7 @@
     ThyselfRouter.prototype.routes = {
       "": "index",
       "u": "settings",
+      "i/demo": "demoMain",
       "u/:user/:year/:month/:day": "journal",
       "u/:user/:year/:month/:day/m/:metric_name/e/:entry_id/:entry_desc": "entrySummary"
     };
@@ -476,7 +510,7 @@
 
     ThyselfRouter.prototype.journal = function(user, year, month, day) {
       var journalView;
-      journalView = new Thyself.Views.JournalView(user, year, month, day);
+      journalView = new Thyself.Views.JournalView();
       return jounalView.render();
     };
 
@@ -489,6 +523,18 @@
       return entryView.render();
     };
 
+    ThyselfRouter.prototype.demoMain = function() {
+      var demoEntry, journalView;
+      demoEntry = new Thyself.Models.JournalEntry({
+        user_id: "demo",
+        text: ""
+      });
+      journalView = new Thyself.Views.JournalView({
+        model: demoEntry
+      });
+      return journalView.render();
+    };
+
     return ThyselfRouter;
 
   })(Backbone.Router);
@@ -497,7 +543,7 @@
     var href;
     href = $(this).attr("href");
     if (!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-      if (href.substring(0, 1) === '/' && href.substring(0, 3) !== "/a/") {
+      if (href.substring(0, 1) === '/' && href.substring(0, 3) !== "/a/" && href !== "/") {
         Thyself.router.navigate(href, {
           trigger: true
         });
