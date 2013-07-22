@@ -206,7 +206,7 @@ $dbl-pad-pct: 4.1%; /* Equivalent value in percent, manually computed */
   //background: url("/static/img/cream_dust.png");   
 
   /*padding: ($dbl-pad-pct) ($dbl-pad-pct * 1.618 ) ($dbl-pad-pct * 1.9) ($dbl-pad-pct * 1.9); */
-  padding: 10% 11.5% 12% 13.5%;
+  padding: 11.5% 11.5% 13% 13.5%;
 
   /*background: url("/static/img/cream_dust.png");    */
 
@@ -221,7 +221,7 @@ $dbl-pad-pct: 4.1%; /* Equivalent value in percent, manually computed */
   }  
 
   .date {
-    margin-bottom: $std-pad;
+    margin-bottom: ($std-pad / 4);
   }
 }
 
