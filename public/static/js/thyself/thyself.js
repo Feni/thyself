@@ -346,7 +346,6 @@
       if (newDescription !== this.model.get("description")) {
         this.model.set("description", newDescription);
       }
-      alert("Saving");
       this.model.save();
       return Thyself.Page.sidebarView.render();
     };

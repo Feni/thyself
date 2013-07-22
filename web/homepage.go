@@ -12,7 +12,7 @@ func UrlDay(user_id string, t time.Time) string {
 }
 
 func HomepageHandler(w http.ResponseWriter, r *http.Request) {
-	LoadTemplates()	//	 todo : remove for prod
+	//LoadTemplates()	//	 todo : remove for prod
 	if isAuth(r) {
 		http.Redirect(w, r, UrlDay(GetLoggedInUser(r), time.Now()), 302) // TODO: change this url to today's date-time
 	} else {

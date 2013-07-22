@@ -125,7 +125,6 @@ class Thyself.Views.EntryEditView extends Backbone.View
       $(@el).find(".editAction").text(@model.get("metric"))
     if newDescription != @model.get("description")
       @model.set("description", newDescription)
-    alert("Saving")
     @model.save()
     Thyself.Page.sidebarView.render()
 
