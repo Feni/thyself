@@ -497,7 +497,7 @@
     var href;
     href = $(this).attr("href");
     if (!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-      if (href.substring(0, 1) === '/') {
+      if (href.substring(0, 1) === '/' && href.substring(0, 3) !== "/a/") {
         Thyself.router.navigate(href, {
           trigger: true
         });
