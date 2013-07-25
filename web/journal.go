@@ -87,8 +87,9 @@ func CreatePrefetch(entries_list []data.MetricEntry, entry_id string) string {
 		renderedEntries += entry.RenderJS()
 	}
 	renderedEntries += "]);"
-
 	preData += renderedEntries
+
+	//journalEntry := "Thyself.Data.Journal = new Thyself.Models.JournalEntry();"
 
 	preData += `  Thyself.Data.Entries = defaultEntries;
   	Thyself.Page.sidebarView = new Thyself.Views.EntrySummaryListView({

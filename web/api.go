@@ -120,14 +120,18 @@ func CreateEntry(r *http.Request) *data.MetricEntry {
 	log.Debug(err, "Error reading create entry content body")
 	if len(body) > 0 {
 		err := json.Unmarshal(body, &metric)
-		log.Debug(err, "ERROR; body Unmarhsall error ")
+		log.Debug(err, "ERROR; body Unmarhsall error " + string(body))
 	}
 	// Overwrite with form fields if not specified in content body
 	if metric.Description == "" {
 		metric.Description = r.FormValue("description")
+		log.Info("Form value description is ",  metric.Description)
 	}
 	if metric.UnixTime == 0 {
 		metric.UnixTime = util.GetTime(r)
+	}
+	if metric.Privacy == ""{
+		metric.Privacy = "PUBLIC"
 	}
 	if metric.Description != "" {
 		structuredRep := nlp.Parse(metric.Description)

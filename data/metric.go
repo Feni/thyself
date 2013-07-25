@@ -13,7 +13,6 @@ import (
 type MetricDetail struct {
 	Amount string `json:"amount,omitempty"` // Quantity. float64 on trasmission. But string here so we can omit empty without omitting zero
 	Type   string `json:"type,omitempty"`   // Units. Length = 32 chars
-	Group  string `json:"group,omitempty"`  // Property / attribute. Length = 32 chars
 }
 
 type MetricEntry struct {
@@ -22,21 +21,26 @@ type MetricEntry struct {
 	Description string `json:"description"`
 	UnixTime    int64  `json:"time"` // TODO: rename in code
 	//	LinkedData  string         `json:"linked_data,omitempty"`
-	Metric  string         `json:"metric"`
+	Metric  string      `json:"metric"`
+	Privacy string 		`json:"privacy"`	// values = PRIVATE, PUBLIC
 	Details []MetricDetail `json:"details"`
 }
 
 func AddMetric(user_id string, metric *MetricEntry) {
 	log.Info("data : Add Metric : ", metric, " : USER : ", user_id)
 	// (user_id, me_time, me_id, action, description, details)
-	_, err := SQL_ADD_METRIC.Exec(user_id, metric.ID, metric.UnixTime, metric.Metric, metric.Description)
+	privacyVal := 0	 // public
+	if metric.Privacy == "PRIVATE" {
+		privacyVal = 1
+	}
+	_, err := SQL_ADD_METRIC.Exec(user_id, metric.ID, metric.UnixTime, metric.Metric, metric.Description, privacyVal)
 	if err == nil {
 		for _, detail := range metric.Details {
 			if detail.Amount != "" {
-				_, err := SQL_ADD_DETAIL.Exec(metric.ID, detail.Group, detail.Type, detail.Amount)
+				_, err := SQL_ADD_DETAIL.Exec(metric.ID, detail.Type, detail.Amount)
 				log.Debug(err, "DATA: Detail : Insertion : FAILED : ")
 			} else {
-				_, err := SQL_ADD_DETAIL_NO_AMT.Exec(metric.ID, detail.Group, detail.Type)
+				_, err := SQL_ADD_DETAIL_NO_AMT.Exec(metric.ID, detail.Type)
 				log.Debug(err, "DATA: Detail - no amt : Insertion : FAILED : ")
 			}
 		}
@@ -65,9 +69,17 @@ func GetMetricsByDate(user_id string, start_date, end_date int) []MetricEntry {
 	if err == nil {
 		for rows.Next() {
 			var rowEntry = MetricEntry{User_ID: user_id}
-			if err := rows.Scan(&(rowEntry.ID), &(rowEntry.UnixTime), &(rowEntry.Metric), &(rowEntry.Description)); err != nil {
+			var entryPrivacy int64;
+			if err := rows.Scan(&(rowEntry.ID), &(rowEntry.UnixTime), &(rowEntry.Metric), &(rowEntry.Description), &entryPrivacy); err != nil {
 				log.Debug(err, "DATA : Metric : Retrieval Scan : FAILED : ")
 			} else {
+				log.Info("Entry privacy is ", entryPrivacy)
+				if entryPrivacy == 1{
+					rowEntry.Privacy = "PRIVATE"
+				}else {
+					rowEntry.Privacy = "PUBLIC"
+				}
+
 				rowEntry.Details = make([]MetricDetail, 0, 5)
 				details_rows, d_err := SQL_RETRIEVE_DETAILS.Query(rowEntry.ID)
 				if d_err != nil {
@@ -75,11 +87,10 @@ func GetMetricsByDate(user_id string, start_date, end_date int) []MetricEntry {
 				} else {
 					for details_rows.Next() {
 						en_detail := MetricDetail{}
-						var amt, grp sql.NullString
-						err := details_rows.Scan(&grp, &(en_detail.Type), &amt)
+						var amt sql.NullString
+						err := details_rows.Scan(&(en_detail.Type), &amt)
 						log.Debug(err, "DATA : Detail : Retrieval Scan : FAILED  ")
 						en_detail.Amount = amt.String // amt.Valid
-						en_detail.Group = grp.String
 						rowEntry.Details = append(rowEntry.Details, en_detail)
 					}
 				}
@@ -140,9 +151,6 @@ func (e *MetricEntry) Validate() (bool, string){
 			if err != nil{
 				return false, "Amount must be a float"
 			}
-		}
-		if len(detail.Group) > 32{
-			return false, "Max group name length is 32"
 		}
 		if detail.Type == "" || len(detail.Type) > 160{
 			return false, "Detail type must be defined and be < 160 chars"

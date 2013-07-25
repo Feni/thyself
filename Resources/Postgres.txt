@@ -20,15 +20,21 @@ PostGres - Setup and config
 
 psql thydb -h localhost -U goclient
 
-create table users(email varchar(64) not null UNIQUE, user_id char(5) not null UNIQUE, pass_hash char(60) not null, display_name varchar(70), primary key (email, user_id) );
+create table users(email varchar(64) not null UNIQUE, user_id char(5) not null UNIQUE, pass_hash char(60) not null, display_name varchar(70), primary key (user_id) );
 
 create table journal_entries (user_id char(5) not null, je_time timestamp with time zone not null, je_text text, PRIMARY KEY (user_id, je_time));
 
-create table metric_entries (user_id char(5) NOT NULL, me_id char(8) not null UNIQUE, me_time timestamp with time zone not null, me_action varchar(32) not null, me_description varchar(160), primary key (user_id, me_time, me_id, me_action));
+create table metric_entries (user_id char(5) NOT NULL, me_id char(8) not null UNIQUE, me_time timestamp with time zone not null, me_action varchar(32) not null, me_description varchar(160), me_privacy int default 0, primary key ( me_id));
 
-create table metric_details (me_id char(8) not null, d_group varchar(32), d_type varchar(160), d_amount double precision, primary key (me_id, d_type));
+create table metric_details (me_id char(8) not null, d_type varchar(160), d_amount double precision, primary key (me_id, d_type));
 
 -- amount and category can be null so don't key by them. 
+
+create index user_email on users (email);
+create index user_metrics on metric_entries (user_id);
+create index user_metrics_time on metric_entries (user_id, me_time);
+create index user_metrics_actions on metric_entries (user_id, me_action);
+create index user_metrics_privacy on metric_entries (user_id, me_privacy);
 
 
 alter table metric_entries ADD CONSTRAINT entry_on_user_deleted FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;
@@ -39,11 +45,14 @@ alter table metric_details ADD CONSTRAINT detail_on_entry_deleted FOREIGN KEY (m
 
 
 -- ALTER TABLE users ADD COLUMN display_name varchar(70);
+-- ALTER TABLE metric_details DROP COLUMN d_group
+-- ALTER TABLE metric_entries ADD COLUMN privacy int default 0;
+
+CREATE INDEX entry_privacy ON metric_entries (privacy)
 
 -- 0 = public
 -- 1 = private
 
-create table metric_actions (user_id char(5) NOT NULL, me_action varchar(32) not null, privacy int default 0, primary key (user_id, me_action));
 
 
 

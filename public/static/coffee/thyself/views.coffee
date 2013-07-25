@@ -9,9 +9,10 @@ class DetailSummaryView extends Backbone.View
         <h5 class="key">#{@model.get("type")}</h5>
       """
     else
+      $(@el).addClass("loneval")
       $(@el).html """
         <h5 class="val">#{@model.get("type")}</h5>
-        <h5 class="key">#{@model.get("group")}</h5>
+        <h5 class="key">&nbsp</h5>
       """
     return @
 
@@ -49,23 +50,20 @@ class DetailEditView extends Backbone.View
   tagName: "tr",
   events: {
     "click .deleteDetailBtn" : "deleteDetail",
-    "save" : "saveDetail",
     "change .detailType": "typeEdit"
   }
-  #initialize: () =>
-    #$(@el).unbind(); # Remove attachments to previous renderings
-    #$(@el).bind('save', @save);
+  initialize: () =>
+    $(@el).unbind(); # Remove attachments to previous renderings
+    $(@el).bind('save', @saveDetail);
   saveDetail: () =>
-    alert("Saving detail")
     newAmount = $.trim($(@el).find(".detailAmount").val())
     newType = $.trim($(@el).find(".detailType").val())
-    newGroup = $.trim($(@el).find(".detailGroup").val())
     if newAmount != @model.get("amount")
       @model.set("amount", newAmount)
     if newType != @model.get("type")
       @model.set("type", newType)
-    if newGroup != @model.get("group")
-      @model.set("group", newGroup)
+      if newType == ""
+        deleteDetail()
   deleteDetail: () =>
       @model.destroy() # Delete this element from all collections. 
       @remove() # Remove view from dom
@@ -77,30 +75,29 @@ class DetailEditView extends Backbone.View
   render: () =>
     $(@el).addClass("detailRow")
     $(@el).html("""
-        <td class="fixed-width-3 column"><input type="number" class="detailAmount fullInput" maxlength="32" value='#{@model.get("amount")}'/></td>
-        <td class="fixed-width-3 column"><input type="text" class="detailType fullInput" maxlength="120" value='#{@model.get("type")}'/></td>
-        <td class="fixed-width-3 column"><input type="text" class="detailGroup fullInput" maxlength="32" value='#{@model.get("group")}'/></td>
+        <td class="fixed-width-4 column"><input type="number" class="detailAmount fullInput" maxlength="32" value='#{@model.get("amount")}'/></td>
+        <td class="fixed-width-4 column"><input type="text" class="detailType fullInput" maxlength="120" value='#{@model.get("type")}'/></td>
         <td class='fixed-width-2 tblBtnCol column deleteDetailBtn'><button>Delete</button></td>          
       """);
     return @
 
 class DetailsListEditView extends Backbone.View
   tagName: "table"
+  initialize: () =>
+    $(@el).unbind();
   addDetailsTypeChanged: () =>
     tempRow = $(@el).find("#tempRow")
     @collection.add(new Thyself.Models.Detail({
       amount: "" + tempRow.find(".detailAmount").val()
       type: tempRow.find(".detailType").val()
-      group: tempRow.find(".detailGroup").val()
       }))
     @render()
   tempDetails: () =>
     tempRow = $("<tr id='tempRow'>")
-    tempRow.append("""<td class="fixed-width-3 column"><input type="number" placeholder="Quantity" class="detailAmount fullInput" maxlength="32" value='#{}'/></td>""")
-    tempTypeField = $("""<td class="fixed-width-3 column"><input type="text" placeholder="Units/Type" class="detailType fullInput" maxlength="120" value='#{}'/></td>""")
+    tempRow.append("""<td class="fixed-width-4 pad-1 column"><input type="number" placeholder="Quantity" class="detailAmount fullInput" maxlength="32" value='#{}'/></td>""")
+    tempTypeField = $("""<td class="fixed-width-4 pad-1 column"><input type="text" placeholder="Units/Type" class="detailType fullInput" maxlength="120" value='#{}'/></td>""")
     tempTypeField.bind('change', @addDetailsTypeChanged)
     tempRow.append(tempTypeField)
-    tempRow.append("""<td class="fixed-width-3 column"><input type="text" placeholder="Type Category" class="detailGroup fullInput" maxlength="32" value='#{}'/></td>""")  
   render: () =>
     $(@el).html("")
     $(@el).addClass("width-full")
@@ -109,7 +106,6 @@ class DetailsListEditView extends Backbone.View
         <tr>
           <th class="fixed-width-3 column">Amount</th>
           <th class="fixed-width-3 column">Type</th>
-          <th class="fixed-width-3 column">Group</th>
         </tr>
       </thead>
     """)
@@ -130,6 +126,8 @@ class Thyself.Views.EntryEditView extends Backbone.View
     "click .entrySaveBtn": "saveEntry",
     "click .entryDelteBtn": "deleteEntry"
   }
+  initialize: () =>
+    $(@el).unbind();
 
   saveEntry: () =>
     newAction = $.trim($(@el).find(".editAction").val())

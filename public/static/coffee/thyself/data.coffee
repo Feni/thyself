@@ -1,10 +1,8 @@
 class Thyself.Models.Detail extends Backbone.Model
   defaults:
     amount: "",
-    type: "",
-    group: ""
+    type: ""
   validate: (attrs, options) ->
-    alert("Detail validating")
     if attrs.type == ""
       return "Detail's type field cannot be empty"
 
@@ -60,21 +58,21 @@ class Thyself.Models.Entries extends Backbone.Collection
   url: "/api/v0/entries"
   # Create a tree grouping toghether thigns in similar
   # categories > then types > then date
-  groupData: () =>
-    groups = {}
-    for line in @models
-      myGroup = undefined
-      if line.hasOwnProperty("group")
-        myGroup = line.group
-      if !(group.hasOwnProperty(myGroup))
-        group[myGroup] = {}
-      myType = undefined
-      if line.hasOwnProperty("type")
-        myType = line.type
-      if !(group[myGroup].hasOwnProperty(myType))
-        group[myGroup][myType] = []
-      group[myGroup][myType].push(line)
-    return group
+#  groupData: () =>
+#    groups = {}
+#    for line in @models
+#      myGroup = undefined
+#      if line.hasOwnProperty("group")
+#        myGroup = line.group
+#      if !(group.hasOwnProperty(myGroup))
+#        group[myGroup] = {}
+#      myType = undefined
+#      if line.hasOwnProperty("type")
+#        myType = line.type
+#      if !(group[myGroup].hasOwnProperty(myType))
+#        group[myGroup][myType] = []
+#      group[myGroup][myType].push(line)
+#    return group
 
 class Thyself.Models.JournalEntry extends Backbone.Model
   defaults:

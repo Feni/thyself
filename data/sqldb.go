@@ -19,14 +19,16 @@ var SQL_CREATE_USER, Sql_create_err = sqldb.Prepare("INSERT INTO users (email, u
 var SQL_RETRIEVE_PASS, Sql_pass_err = sqldb.Prepare("SELECT pass_hash, user_id FROM users where email=$1 LIMIT 1")
 
 // Metric queries
-var SQL_RETRIEVE_ALL_METRICS, Sql_all_metrics_err = sqldb.Prepare("SELECT me_id, EXTRACT(EPOCH FROM(me_time))::int, me_action, me_description FROM metric_entries where user_id=$1 ORDER BY me_time")
-var SQL_RETRIEVE_METRIC_DATE_RANGE, Sql_metric_date_range_err = sqldb.Prepare("SELECT me_id, EXTRACT(EPOCH FROM(me_time))::int, me_action, me_description FROM metric_entries where user_id=$1 AND me_time BETWEEN to_timestamp($2) AND to_timestamp($3) ORDER BY me_time")
-var SQL_RETRIEVE_DETAILS, Sql_details_err = sqldb.Prepare("SELECT d_group, d_type, d_amount FROM metric_details WHERE me_id = $1")
+//var SQL_RETRIEVE_ALL_METRICS, Sql_all_metrics_err = sqldb.Prepare("SELECT me_id, EXTRACT(EPOCH FROM(me_time))::int, me_action, me_description, me_privacy FROM metric_entries where user_id=$1 ORDER BY me_time")
+var SQL_RETRIEVE_METRIC_DATE_RANGE, Sql_metric_date_range_err = sqldb.Prepare("SELECT me_id, EXTRACT(EPOCH FROM(me_time))::int, me_action, me_description, me_privacy FROM metric_entries where user_id=$1 AND me_time BETWEEN to_timestamp($2) AND to_timestamp($3) ORDER BY me_time")
+var SQL_RETRIEVE_PUBLIC_METRIC_DATE_RANGE, Sql_pub_metric_date_range_err = sqldb.Prepare("SELECT me_id, EXTRACT(EPOCH FROM(me_time))::int, me_action, me_description FROM metric_entries where user_id=$1 AND me_time BETWEEN to_timestamp($2) AND to_timestamp($3) AND me_privacy=0 ORDER BY me_time")
+
+var SQL_RETRIEVE_DETAILS, Sql_details_err = sqldb.Prepare("SELECT d_type, d_amount FROM metric_details WHERE me_id = $1")
 
 // Create metrics
-var SQL_ADD_METRIC, Sql_add_metric_err = sqldb.Prepare("INSERT INTO metric_entries (user_id, me_id, me_time, me_action, me_description) VALUES ($1, $2, to_timestamp($3), $4, $5)")
-var SQL_ADD_DETAIL, Sql_add_detail_err = sqldb.Prepare("INSERT INTO metric_details (me_id, d_group, d_type, d_amount) VALUES ($1, $2, $3, $4)")
-var SQL_ADD_DETAIL_NO_AMT, Sql_add_detail_no_amt_err = sqldb.Prepare("INSERT INTO metric_details (me_id, d_group, d_type) VALUES ($1, $2, $3)")
+var SQL_ADD_METRIC, Sql_add_metric_err = sqldb.Prepare("INSERT INTO metric_entries (user_id, me_id, me_time, me_action, me_description, me_privacy) VALUES ($1, $2, to_timestamp($3), $4, $5, $6)")
+var SQL_ADD_DETAIL, Sql_add_detail_err = sqldb.Prepare("INSERT INTO metric_details (me_id, d_type, d_amount) VALUES ($1, $2, $3)")
+var SQL_ADD_DETAIL_NO_AMT, Sql_add_detail_no_amt_err = sqldb.Prepare("INSERT INTO metric_details (me_id, d_type) VALUES ($1, $2)")
 
 // je user_id, je_time, je_text
 // Journal entry
@@ -40,8 +42,9 @@ func SqlInit() {
 	log.Debug(Sqlconn_err, "  Database connection error ")
 	log.Debug(Sql_create_err, "  Sql Error create user: ")
 	log.Debug(Sql_pass_err, "  Sql Error pass: ")
-	log.Debug(Sql_all_metrics_err, "  Sql Error all mets: ")
+//	log.Debug(Sql_all_metrics_err, "  Sql Error all mets: ")
 	log.Debug(Sql_metric_date_range_err, "  Sql Error date mets: ")
+	log.Debug(Sql_pub_metric_date_range_err, "  Sql Error public date mets: ")
 	log.Debug(Sql_add_metric_err, "  Sql error add metrics error: ")
 	log.Debug(Sql_add_detail_err, "  Sql Error add details: ")
 	log.Debug(Sql_add_detail_no_amt_err, "  Sql Error add detail: ")

@@ -18,13 +18,10 @@ $(document).delegate "a", "click", (event) ->
 
 $("#mEntryForm").submit( () -> 
   actionUrl = $(this).attr('action')
- # alert("Sure, the form was submitted. but I'm not going to do anything. Go to : "+actionUrl);
   newEntry = new Thyself.Models.Entry(); 
   if actionUrl == '/i/demo/m' 
     newEntry.url = '/i/demo/m'
-
   descriptionField = $(this).find("#description")
-  alert("Submitting form to " + actionUrl)
   
   entryFields = { description: descriptionField.val(), time: Math.round(new Date().getTime() / 1000) }; 
   newEntry.save(entryFields, { 
@@ -45,9 +42,14 @@ $("#mEntryForm").submit( () ->
   return false;
 );
 
+$(".alert-box").delay(5500).fadeOut(1200);
+
 # TODO: journal entry form
 
 
 
 Backbone.history.start({ pushState: true })
 Thyself.router = new ThyselfRouter();
+
+
+

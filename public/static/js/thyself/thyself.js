@@ -15,12 +15,10 @@
 
     Detail.prototype.defaults = {
       amount: "",
-      type: "",
-      group: ""
+      type: ""
     };
 
     Detail.prototype.validate = function(attrs, options) {
-      alert("Detail validating");
       if (attrs.type === "") {
         return "Detail's type field cannot be empty";
       }
@@ -104,38 +102,12 @@
     __extends(Entries, _super);
 
     function Entries() {
-      this.groupData = __bind(this.groupData, this);
       return Entries.__super__.constructor.apply(this, arguments);
     }
 
     Entries.prototype.model = Thyself.Models.Entry;
 
     Entries.prototype.url = "/api/v0/entries";
-
-    Entries.prototype.groupData = function() {
-      var groups, line, myGroup, myType, _i, _len, _ref;
-      groups = {};
-      _ref = this.models;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        line = _ref[_i];
-        myGroup = void 0;
-        if (line.hasOwnProperty("group")) {
-          myGroup = line.group;
-        }
-        if (!(group.hasOwnProperty(myGroup))) {
-          group[myGroup] = {};
-        }
-        myType = void 0;
-        if (line.hasOwnProperty("type")) {
-          myType = line.type;
-        }
-        if (!(group[myGroup].hasOwnProperty(myType))) {
-          group[myGroup][myType] = [];
-        }
-        group[myGroup][myType].push(line);
-      }
-      return group;
-    };
 
     return Entries;
 
@@ -211,7 +183,8 @@
       if (this.model.get("amount")) {
         $(this.el).html("<h5 class=\"val\">" + (this.model.get("amount")) + "</h5>\n<h5 class=\"key\">" + (this.model.get("type")) + "</h5>");
       } else {
-        $(this.el).html("<h5 class=\"val\">" + (this.model.get("type")) + "</h5>\n<h5 class=\"key\">" + (this.model.get("group")) + "</h5>");
+        $(this.el).addClass("loneval");
+        $(this.el).html("<h5 class=\"val\">" + (this.model.get("type")) + "</h5>\n<h5 class=\"key\">&nbsp</h5>");
       }
       return this;
     };
@@ -300,6 +273,8 @@
       this.deleteDetail = __bind(this.deleteDetail, this);
 
       this.saveDetail = __bind(this.saveDetail, this);
+
+      this.initialize = __bind(this.initialize, this);
       return DetailEditView.__super__.constructor.apply(this, arguments);
     }
 
@@ -307,24 +282,26 @@
 
     DetailEditView.prototype.events = {
       "click .deleteDetailBtn": "deleteDetail",
-      "save": "saveDetail",
       "change .detailType": "typeEdit"
     };
 
+    DetailEditView.prototype.initialize = function() {
+      $(this.el).unbind();
+      return $(this.el).bind('save', this.saveDetail);
+    };
+
     DetailEditView.prototype.saveDetail = function() {
-      var newAmount, newGroup, newType;
-      alert("Saving detail");
+      var newAmount, newType;
       newAmount = $.trim($(this.el).find(".detailAmount").val());
       newType = $.trim($(this.el).find(".detailType").val());
-      newGroup = $.trim($(this.el).find(".detailGroup").val());
       if (newAmount !== this.model.get("amount")) {
         this.model.set("amount", newAmount);
       }
       if (newType !== this.model.get("type")) {
         this.model.set("type", newType);
-      }
-      if (newGroup !== this.model.get("group")) {
-        return this.model.set("group", newGroup);
+        if (newType === "") {
+          return deleteDetail();
+        }
       }
     };
 
@@ -343,7 +320,7 @@
 
     DetailEditView.prototype.render = function() {
       $(this.el).addClass("detailRow");
-      $(this.el).html("<td class=\"fixed-width-3 column\"><input type=\"number\" class=\"detailAmount fullInput\" maxlength=\"32\" value='" + (this.model.get("amount")) + "'/></td>\n<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailType fullInput\" maxlength=\"120\" value='" + (this.model.get("type")) + "'/></td>\n<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailGroup fullInput\" maxlength=\"32\" value='" + (this.model.get("group")) + "'/></td>\n<td class='fixed-width-2 tblBtnCol column deleteDetailBtn'><button>Delete</button></td>          ");
+      $(this.el).html("<td class=\"fixed-width-4 column\"><input type=\"number\" class=\"detailAmount fullInput\" maxlength=\"32\" value='" + (this.model.get("amount")) + "'/></td>\n<td class=\"fixed-width-4 column\"><input type=\"text\" class=\"detailType fullInput\" maxlength=\"120\" value='" + (this.model.get("type")) + "'/></td>\n<td class='fixed-width-2 tblBtnCol column deleteDetailBtn'><button>Delete</button></td>          ");
       return this;
     };
 
@@ -361,18 +338,23 @@
       this.tempDetails = __bind(this.tempDetails, this);
 
       this.addDetailsTypeChanged = __bind(this.addDetailsTypeChanged, this);
+
+      this.initialize = __bind(this.initialize, this);
       return DetailsListEditView.__super__.constructor.apply(this, arguments);
     }
 
     DetailsListEditView.prototype.tagName = "table";
+
+    DetailsListEditView.prototype.initialize = function() {
+      return $(this.el).unbind();
+    };
 
     DetailsListEditView.prototype.addDetailsTypeChanged = function() {
       var tempRow;
       tempRow = $(this.el).find("#tempRow");
       this.collection.add(new Thyself.Models.Detail({
         amount: "" + tempRow.find(".detailAmount").val(),
-        type: tempRow.find(".detailType").val(),
-        group: tempRow.find(".detailGroup").val()
+        type: tempRow.find(".detailType").val()
       }));
       return this.render();
     };
@@ -380,18 +362,17 @@
     DetailsListEditView.prototype.tempDetails = function() {
       var tempRow, tempTypeField;
       tempRow = $("<tr id='tempRow'>");
-      tempRow.append("<td class=\"fixed-width-3 column\"><input type=\"number\" placeholder=\"Quantity\" class=\"detailAmount fullInput\" maxlength=\"32\" value='" + "'/></td>");
-      tempTypeField = $("<td class=\"fixed-width-3 column\"><input type=\"text\" placeholder=\"Units/Type\" class=\"detailType fullInput\" maxlength=\"120\" value='" + "'/></td>");
+      tempRow.append("<td class=\"fixed-width-4 pad-1 column\"><input type=\"number\" placeholder=\"Quantity\" class=\"detailAmount fullInput\" maxlength=\"32\" value='" + "'/></td>");
+      tempTypeField = $("<td class=\"fixed-width-4 pad-1 column\"><input type=\"text\" placeholder=\"Units/Type\" class=\"detailType fullInput\" maxlength=\"120\" value='" + "'/></td>");
       tempTypeField.bind('change', this.addDetailsTypeChanged);
-      tempRow.append(tempTypeField);
-      return tempRow.append("<td class=\"fixed-width-3 column\"><input type=\"text\" placeholder=\"Type Category\" class=\"detailGroup fullInput\" maxlength=\"32\" value='" + "'/></td>");
+      return tempRow.append(tempTypeField);
     };
 
     DetailsListEditView.prototype.render = function() {
       $(this.el).html("");
       $(this.el).addClass("width-full");
       $(this.el).addClass("dataSummaryTable");
-      $(this.el).append("<thead>\n  <tr>\n    <th class=\"fixed-width-3 column\">Amount</th>\n    <th class=\"fixed-width-3 column\">Type</th>\n    <th class=\"fixed-width-3 column\">Group</th>\n  </tr>\n</thead>");
+      $(this.el).append("<thead>\n  <tr>\n    <th class=\"fixed-width-3 column\">Amount</th>\n    <th class=\"fixed-width-3 column\">Type</th>\n  </tr>\n</thead>");
       _(this.collection.models).each(function(detail) {
         var detailView;
         detailView = new DetailEditView({
@@ -420,6 +401,8 @@
       this.deleteEntry = __bind(this.deleteEntry, this);
 
       this.saveEntry = __bind(this.saveEntry, this);
+
+      this.initialize = __bind(this.initialize, this);
       return EntryEditView.__super__.constructor.apply(this, arguments);
     }
 
@@ -428,6 +411,10 @@
     EntryEditView.prototype.events = {
       "click .entrySaveBtn": "saveEntry",
       "click .entryDelteBtn": "deleteEntry"
+    };
+
+    EntryEditView.prototype.initialize = function() {
+      return $(this.el).unbind();
     };
 
     EntryEditView.prototype.saveEntry = function() {
@@ -651,7 +638,6 @@
       newEntry.url = '/i/demo/m';
     }
     descriptionField = $(this).find("#description");
-    alert("Submitting form to " + actionUrl);
     entryFields = {
       description: descriptionField.val(),
       time: Math.round(new Date().getTime() / 1000)
@@ -673,6 +659,8 @@
     descriptionField.val("");
     return false;
   });
+
+  $(".alert-box").delay(5500).fadeOut(1200);
 
   Backbone.history.start({
     pushState: true
