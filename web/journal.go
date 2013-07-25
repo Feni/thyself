@@ -90,7 +90,7 @@ func CreatePrefetch(entries_list []data.MetricEntry, entry_id string) string {
 
 	preData += renderedEntries
 
-	preData += `  Thyself.Data.prefetch = defaultEntries;
+	preData += `  Thyself.Data.Entries = defaultEntries;
   	Thyself.Page.sidebarView = new Thyself.Views.EntrySummaryListView({
       collection: defaultEntries,
       el: $('#sidebarActionList')
@@ -98,7 +98,7 @@ func CreatePrefetch(entries_list []data.MetricEntry, entry_id string) string {
 
 	if entry_id != "" {
 		preData += `
-			var entryView = new Thyself.Views.EntryEditView({model: Thyself.Data.prefetch.get("` + entry_id + `")});
+			var entryView = new Thyself.Views.EntryEditView({model: Thyself.Data.Entries.get("` + entry_id + `")});
 			entryView.render();
 		`
 	}

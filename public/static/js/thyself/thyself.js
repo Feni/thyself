@@ -20,6 +20,7 @@
     };
 
     Detail.prototype.validate = function(attrs, options) {
+      alert("Detail validating");
       if (attrs.type === "") {
         return "Detail's type field cannot be empty";
       }
@@ -61,10 +62,7 @@
     };
 
     Entry.prototype.validate = function(attrs, options) {
-      if (attrs.user_id === "") {
-        return "User_ID can't be null";
-      }
-      if (attrs.metric === "") {
+      if (attrs.id !== "" && attrs.metric === "") {
         return "Metric can't be null";
       }
     };
@@ -85,6 +83,16 @@
       tempTimeObj = this.timeObj();
       modelUrl = ("/u/" + (this.get('user_id'))) + ("/" + (tempTimeObj.getFullYear())) + ("/" + (tempTimeObj.getMonth() + 1)) + ("/" + (tempTimeObj.getDate())) + ("/m/" + ($.trim(this.get('metric')))) + ("/e/" + (this.get('id'))) + ("/" + ($.trim(cleanDesc)));
       return modelUrl;
+    };
+
+    Entry.prototype.dateUrl = function() {
+      var timeObj, urlDate;
+      timeObj = this.timeObj();
+      urlDate = ("/u/" + (this.get('user_id'))) + ("/" + (timeObj.getFullYear())) + ("/" + (timeObj.getMonth() + 1)) + ("/" + (timeObj.getDate()));
+      if (this.get('user_id') === "demo") {
+        urlDate = "/i/demo";
+      }
+      return urlDate;
     };
 
     return Entry;
@@ -138,6 +146,7 @@
     __extends(JournalEntry, _super);
 
     function JournalEntry() {
+      this.id = __bind(this.id, this);
       return JournalEntry.__super__.constructor.apply(this, arguments);
     }
 
@@ -146,6 +155,14 @@
       text: "",
       time: 0
     };
+
+    JournalEntry.prototype.id = function() {
+      var timeObj;
+      timeObj = new Date(time * 1000);
+      return timeObj.getYear() + '/' + timeObj.getMonth() + "/" + timeObj.getDay();
+    };
+
+    JournalEntry.prototype.urlRoot = '/api/v0/journal';
 
     JournalEntry.prototype.timeObj = function() {
       if (this.get('time') === 0) {
@@ -158,6 +175,22 @@
     return JournalEntry;
 
   })(Backbone.Model);
+
+  Thyself.Collections.JournalEntries = (function(_super) {
+
+    __extends(JournalEntries, _super);
+
+    function JournalEntries() {
+      return JournalEntries.__super__.constructor.apply(this, arguments);
+    }
+
+    JournalEntries.prototype.model = Thyself.Models.JournalEntry;
+
+    JournalEntries.prototype.url = "/api/v0/journal";
+
+    return JournalEntries;
+
+  })(Backbone.Collection);
 
   DetailSummaryView = (function(_super) {
 
@@ -262,21 +295,25 @@
     function DetailEditView() {
       this.render = __bind(this.render, this);
 
-      this.save = __bind(this.save, this);
+      this.typeEdit = __bind(this.typeEdit, this);
 
-      this.initialize = __bind(this.initialize, this);
+      this.deleteDetail = __bind(this.deleteDetail, this);
+
+      this.saveDetail = __bind(this.saveDetail, this);
       return DetailEditView.__super__.constructor.apply(this, arguments);
     }
 
     DetailEditView.prototype.tagName = "tr";
 
-    DetailEditView.prototype.initialize = function() {
-      $(this.el).unbind();
-      return $(this.el).bind('save', this.save);
+    DetailEditView.prototype.events = {
+      "click .deleteDetailBtn": "deleteDetail",
+      "save": "saveDetail",
+      "change .detailType": "typeEdit"
     };
 
-    DetailEditView.prototype.save = function() {
+    DetailEditView.prototype.saveDetail = function() {
       var newAmount, newGroup, newType;
+      alert("Saving detail");
       newAmount = $.trim($(this.el).find(".detailAmount").val());
       newType = $.trim($(this.el).find(".detailType").val());
       newGroup = $.trim($(this.el).find(".detailGroup").val());
@@ -291,9 +328,22 @@
       }
     };
 
+    DetailEditView.prototype.deleteDetail = function() {
+      this.model.destroy();
+      return this.remove();
+    };
+
+    DetailEditView.prototype.typeEdit = function() {
+      var newType;
+      newType = $.trim($(this.el).find(".detailType").val());
+      if (newType === "") {
+        return this.deleteDetail();
+      }
+    };
+
     DetailEditView.prototype.render = function() {
       $(this.el).addClass("detailRow");
-      $(this.el).html("<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailAmount fullInput\" maxlength=\"32\" value='" + (this.model.get("amount")) + "'/></td>\n<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailType fullInput\" maxlength=\"120\" value='" + (this.model.get("type")) + "'/></td>\n<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailGroup fullInput\" maxlength=\"32\" value='" + (this.model.get("group")) + "'/></td>\n<td class=\"fixed-width-2 tblBtnCol column\"><button class=\"\">Delete</button></td>");
+      $(this.el).html("<td class=\"fixed-width-3 column\"><input type=\"number\" class=\"detailAmount fullInput\" maxlength=\"32\" value='" + (this.model.get("amount")) + "'/></td>\n<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailType fullInput\" maxlength=\"120\" value='" + (this.model.get("type")) + "'/></td>\n<td class=\"fixed-width-3 column\"><input type=\"text\" class=\"detailGroup fullInput\" maxlength=\"32\" value='" + (this.model.get("group")) + "'/></td>\n<td class='fixed-width-2 tblBtnCol column deleteDetailBtn'><button>Delete</button></td>          ");
       return this;
     };
 
@@ -311,14 +361,10 @@
       this.tempDetails = __bind(this.tempDetails, this);
 
       this.addDetailsTypeChanged = __bind(this.addDetailsTypeChanged, this);
-
-      this.initialize = __bind(this.initialize, this);
       return DetailsListEditView.__super__.constructor.apply(this, arguments);
     }
 
     DetailsListEditView.prototype.tagName = "table";
-
-    DetailsListEditView.prototype.initialize = function() {};
 
     DetailsListEditView.prototype.addDetailsTypeChanged = function() {
       var tempRow;
@@ -349,7 +395,8 @@
       _(this.collection.models).each(function(detail) {
         var detailView;
         detailView = new DetailEditView({
-          model: detail
+          model: detail,
+          collection: this.collection
         });
         return $(this.el).append(detailView.render().el);
       }, this);
@@ -370,19 +417,20 @@
 
       this.render = __bind(this.render, this);
 
-      this.save = __bind(this.save, this);
+      this.deleteEntry = __bind(this.deleteEntry, this);
 
-      this.initialize = __bind(this.initialize, this);
+      this.saveEntry = __bind(this.saveEntry, this);
       return EntryEditView.__super__.constructor.apply(this, arguments);
     }
 
     EntryEditView.prototype.el = $("#journal_entry");
 
-    EntryEditView.prototype.initialize = function() {
-      return $(this.el).unbind();
+    EntryEditView.prototype.events = {
+      "click .entrySaveBtn": "saveEntry",
+      "click .entryDelteBtn": "deleteEntry"
     };
 
-    EntryEditView.prototype.save = function() {
+    EntryEditView.prototype.saveEntry = function() {
       var newAction, newDescription,
         _this = this;
       newAction = $.trim($(this.el).find(".editAction").val());
@@ -392,33 +440,42 @@
         id: this.model.get('id')
       }, {
         success: function(model, response) {
-          return alert("Success happens here");
+          var newMessage;
+          newMessage = $("<li class='alert-box alert'>Entry saved successfully</li>");
+          $(".message_flashes").append(newMessage);
+          return newMessage.delay(3500).fadeOut(1200);
         },
         error: function(model, response) {
-          alert("error happens here ");
-          console.log(response);
-          return console.log(model);
+          var newMessage;
+          newMessage = $("<li class='alert-box alert'>Error saving entry: " + response + "</li>");
+          $(".message_flashes").append(newMessage);
+          return newMessage.delay(3500).fadeOut(1200);
         }
       });
       $(this.el).find(".editAction").val(this.model.get("metric"));
       return Thyself.Page.sidebarView.render();
     };
 
+    EntryEditView.prototype.deleteEntry = function() {
+      Thyself.router.navigate(this.model.dateUrl(), {
+        trigger: true
+      });
+      this.model.destroy();
+      return Thyself.Page.sidebarView.render();
+    };
+
     EntryEditView.prototype.render = function() {
-      var deleteButton, entryControlsDiv, saveButton, timeObj, urlDate;
+      var deleteButton, entryControlsDiv, saveButton, timeObj,
+        _this = this;
       timeObj = this.model.timeObj();
-      urlDate = ("/u/" + (this.model.get('user_id'))) + ("/" + (timeObj.getFullYear())) + ("/" + (timeObj.getMonth() + 1)) + ("/" + (timeObj.getDate()));
-      if (this.model.get('user_id') === "demo") {
-        urlDate = "/i/demo";
-      }
-      $(this.el).html("<a href=\"" + urlDate + "\"> <h4 class=\"date\">" + (timeObj.toDateString()) + "</h4></a>\n  <input type=\"text\" class=\"editAction\" placeholder=\"Action\" maxlength=\"32\" value='" + (this.model.get("metric")) + "'/>\n  <!--<button class=\"flatButton\">Delete</button>  \n  <button class=\"flatButton\">Save</button>-->\n  <input type=\"text\" class=\"fullInput editDescription\" placeholder=\"Description\" maxlength=\"160\" value='" + (this.model.get("description")) + "'/>\n<p class=\"time\">" + (timeObj.toTimeString()) + "</p>\n</hr>");
+      $(this.el).html("<a href=\"" + (this.model.dateUrl()) + "\"> <h4 class=\"date\">" + (timeObj.toDateString()) + "</h4></a>\n  <input type=\"text\" class=\"editAction\" placeholder=\"Action\" maxlength=\"32\" value='" + (this.model.get("metric")) + "'/>\n  <input type=\"text\" class=\"fullInput editDescription\" placeholder=\"Description\" maxlength=\"160\" value='" + (this.model.get("description")) + "'/>\n<p class=\"time\">" + (timeObj.toTimeString()) + "</p>\n</hr>");
       $(this.el).append(new DetailsListEditView({
         collection: this.model.get("details")
       }).render());
       entryControlsDiv = $("<div class='entryControls'>");
-      deleteButton = $("<button class='flatButton pad-1'>Delete</button>");
-      saveButton = $("<button class='flatButton pad-1'>Save</button>");
-      $(saveButton).bind('click', this.save);
+      deleteButton = $("<button class='flatButton pad-1 entryDelteBtn'>Delete</button>");
+      saveButton = $("<button class='flatButton pad-1 entrySaveBtn'>Save</button>");
+      $(deleteButton).bind('click', function() {});
       $(entryControlsDiv).append(deleteButton);
       $(entryControlsDiv).append(saveButton);
       $(this.el).append(entryControlsDiv);
@@ -539,12 +596,12 @@
     ThyselfRouter.prototype.journal = function(user, year, month, day) {
       var journalView;
       journalView = new Thyself.Views.JournalView();
-      return jounalView.render();
+      return journalView.render();
     };
 
     ThyselfRouter.prototype.entrySummary = function(user, year, month, day, metric_name, entry_id, entry_desc) {
       var entry, entryView;
-      entry = Thyself.Data.prefetch.get(entry_id);
+      entry = Thyself.Data.Entries.get(entry_id);
       entryView = new Thyself.Views.EntryEditView({
         model: entry
       });
@@ -594,6 +651,7 @@
       newEntry.url = '/i/demo/m';
     }
     descriptionField = $(this).find("#description");
+    alert("Submitting form to " + actionUrl);
     entryFields = {
       description: descriptionField.val(),
       time: Math.round(new Date().getTime() / 1000)
@@ -606,6 +664,10 @@
         entry.set("details", detailsCollection);
         Thyself.Page.sidebarView.collection.add(newEntry);
         return Thyself.Page.sidebarView.render();
+      },
+      error: function(model, response) {
+        console.log(model);
+        return console.log(response);
       }
     });
     descriptionField.val("");

@@ -199,7 +199,7 @@ const PrefetchExample = `
     })
   ]);
 
-  Thyself.Data.prefetch = defaultEntries;
+  Thyself.Data.Entries = defaultEntries;
   Thyself.Page.sidebarView = new Thyself.Views.EntrySummaryListView({
       collection: defaultEntries,
       el: $('#sidebarActionList'),

@@ -46,11 +46,17 @@ class Thyself.Views.EntrySummaryListView extends Backbone.View
 # Edit views
 
 class DetailEditView extends Backbone.View
-  tagName: "tr"
-  initialize: () =>
-    $(@el).unbind(); # Remove attachments to previous renderings
-    $(@el).bind('save', @save);    
-  save: () =>
+  tagName: "tr",
+  events: {
+    "click .deleteDetailBtn" : "deleteDetail",
+    "save" : "saveDetail",
+    "change .detailType": "typeEdit"
+  }
+  #initialize: () =>
+    #$(@el).unbind(); # Remove attachments to previous renderings
+    #$(@el).bind('save', @save);
+  saveDetail: () =>
+    alert("Saving detail")
     newAmount = $.trim($(@el).find(".detailAmount").val())
     newType = $.trim($(@el).find(".detailType").val())
     newGroup = $.trim($(@el).find(".detailGroup").val())
@@ -60,23 +66,27 @@ class DetailEditView extends Backbone.View
       @model.set("type", newType)
     if newGroup != @model.get("group")
       @model.set("group", newGroup)
+  deleteDetail: () =>
+      @model.destroy() # Delete this element from all collections. 
+      @remove() # Remove view from dom
+  typeEdit: () =>
+    newType = $.trim($(@el).find(".detailType").val())
+    if newType == ""
+      @deleteDetail()
+
   render: () =>
     $(@el).addClass("detailRow")
     $(@el).html("""
-        <td class="fixed-width-3 column"><input type="text" class="detailAmount fullInput" maxlength="32" value='#{@model.get("amount")}'/></td>
+        <td class="fixed-width-3 column"><input type="number" class="detailAmount fullInput" maxlength="32" value='#{@model.get("amount")}'/></td>
         <td class="fixed-width-3 column"><input type="text" class="detailType fullInput" maxlength="120" value='#{@model.get("type")}'/></td>
         <td class="fixed-width-3 column"><input type="text" class="detailGroup fullInput" maxlength="32" value='#{@model.get("group")}'/></td>
-        <td class="fixed-width-2 tblBtnCol column"><button class="">Delete</button></td>
+        <td class='fixed-width-2 tblBtnCol column deleteDetailBtn'><button>Delete</button></td>          
       """);
     return @
 
 class DetailsListEditView extends Backbone.View
   tagName: "table"
-  initialize: () =>
-    #$(@el).unbind(); # Remove attachments to previous renderings
-    #$(@el).bind('save', @save);
   addDetailsTypeChanged: () =>
-    #alert("Type field changed. Adding extra detail")
     tempRow = $(@el).find("#tempRow")
     @collection.add(new Thyself.Models.Detail({
       amount: "" + tempRow.find(".detailAmount").val()
@@ -84,7 +94,6 @@ class DetailsListEditView extends Backbone.View
       group: tempRow.find(".detailGroup").val()
       }))
     @render()
-    #$(@el).append(@tempDetails())
   tempDetails: () =>
     tempRow = $("<tr id='tempRow'>")
     tempRow.append("""<td class="fixed-width-3 column"><input type="number" placeholder="Quantity" class="detailAmount fullInput" maxlength="32" value='#{}'/></td>""")
@@ -105,7 +114,7 @@ class DetailsListEditView extends Backbone.View
       </thead>
     """)
     _(@collection.models).each((detail) ->
-      detailView = new DetailEditView({ model: detail });
+      detailView = new DetailEditView({ model: detail, collection: @collection });
       $(@el).append(detailView.render().el);
     , @);
     $(@el).append(@tempDetails())
@@ -117,10 +126,12 @@ class DetailsListEditView extends Backbone.View
 
 class Thyself.Views.EntryEditView extends Backbone.View
   el: $("#journal_entry")
-  initialize: () =>
-    $(@el).unbind(); # Remove attachments to previous renderings
-    #$(@el).bind('change', @save);
-  save: () =>
+  events: {
+    "click .entrySaveBtn": "saveEntry",
+    "click .entryDelteBtn": "deleteEntry"
+  }
+
+  saveEntry: () =>
     newAction = $.trim($(@el).find(".editAction").val())
     newDescription = $.trim($(@el).find(".editDescription").val())
     $(@el).find(".detailRow").trigger("save")
@@ -128,29 +139,26 @@ class Thyself.Views.EntryEditView extends Backbone.View
         id: @model.get('id')
       }, 
       success: (model, response) =>
-        alert("Success happens here")
+        newMessage = $("<li class='alert-box alert'>Entry saved successfully</li>")
+        $(".message_flashes").append(newMessage)
+        newMessage.delay(3500).fadeOut(1200);
       error: (model, response) =>
-        alert("error happens here ")
-        console.log(response)
-        console.log(model)
+        newMessage = $("<li class='alert-box alert'>Error saving entry: "+response+"</li>")
+        $(".message_flashes").append(newMessage)
+        newMessage.delay(3500).fadeOut(1200);
     )
     $(@el).find(".editAction").val(@model.get("metric"))
+    Thyself.Page.sidebarView.render()
+  deleteEntry: () =>
+    Thyself.router.navigate(@model.dateUrl(), { trigger: true })
+    @model.destroy()
     Thyself.Page.sidebarView.render()
 
   render: () =>
     timeObj = @model.timeObj()
-    urlDate = "/u/#{@model.get('user_id')}" +   # define url from base. else it will append on exiting page url
-      "/#{timeObj.getFullYear()}"+
-      "/#{timeObj.getMonth() + 1}" +
-      "/#{timeObj.getDate()}"
-    if @model.get('user_id') == "demo"
-      urlDate = "/i/demo"
-
     $(@el).html("""
-      <a href="#{urlDate}"> <h4 class="date">#{timeObj.toDateString()}</h4></a>
+      <a href="#{@model.dateUrl()}"> <h4 class="date">#{timeObj.toDateString()}</h4></a>
         <input type="text" class="editAction" placeholder="Action" maxlength="32" value='#{@model.get("metric")}'/>
-        <!--<button class="flatButton">Delete</button>  
-        <button class="flatButton">Save</button>-->
         <input type="text" class="fullInput editDescription" placeholder="Description" maxlength="160" value='#{@model.get("description")}'/>
       <p class="time">#{timeObj.toTimeString()}</p>
       </hr>
@@ -159,10 +167,14 @@ class Thyself.Views.EntryEditView extends Backbone.View
     $(@el).append(new DetailsListEditView({collection: @model.get("details")}).render())
     #$(@el).append("<hr>")
     entryControlsDiv = $("<div class='entryControls'>")
-    deleteButton = $("<button class='flatButton pad-1'>Delete</button>")
-    saveButton = $("<button class='flatButton pad-1'>Save</button>")
-
-    $(saveButton).bind('click', @save);
+    deleteButton = $("<button class='flatButton pad-1 entryDelteBtn'>Delete</button>")
+    saveButton = $("<button class='flatButton pad-1 entrySaveBtn'>Save</button>")
+    $(deleteButton).bind('click', () => 
+      
+      #@el.html("")
+      # TODO ; sidebar re-render
+      # reroute journal entry to something else
+    );
     
     $(entryControlsDiv).append(deleteButton)
     $(entryControlsDiv).append(saveButton)

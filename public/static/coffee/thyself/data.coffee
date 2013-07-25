@@ -4,6 +4,7 @@ class Thyself.Models.Detail extends Backbone.Model
     type: "",
     group: ""
   validate: (attrs, options) ->
+    alert("Detail validating")
     if attrs.type == ""
       return "Detail's type field cannot be empty"
 
@@ -20,14 +21,10 @@ class Thyself.Models.Entry extends Backbone.Model
     metric: "",
     details: new Thyself.Models.Details()
   validate: (attrs, options) -> 
-    if attrs.user_id == "" 
-      return "User_ID can't be null"
-    if attrs.metric == "" 
+    # metric can only be null if we haven't parsed it yet
+    if attrs.id != "" && attrs.metric == ""
       return "Metric can't be null"
     #if attrs.time  is not a number
-    
-  
-
   timeObj: () ->  # Calling this many times may be inefficient but whatever
     if @get('time') == 0 
       return new Date()
@@ -48,6 +45,15 @@ class Thyself.Models.Entry extends Backbone.Model
       "/e/#{@get('id')}"+
       "/#{$.trim(cleanDesc)}"
     return modelUrl
+  dateUrl: () ->
+    timeObj = @timeObj()
+    urlDate = "/u/#{@get('user_id')}" +   # define url from base. else it will append on exiting page url
+      "/#{timeObj.getFullYear()}"+
+      "/#{timeObj.getMonth() + 1}" +
+      "/#{timeObj.getDate()}"
+    if @get('user_id') == "demo"
+      urlDate = "/i/demo"
+    return urlDate
 
 class Thyself.Models.Entries extends Backbone.Collection
   model: Thyself.Models.Entry
@@ -75,9 +81,19 @@ class Thyself.Models.JournalEntry extends Backbone.Model
     user_id: "",
     text: "",
     time: 0 # May cause bugs
+  id: () =>
+    timeObj = new Date(time * 1000)
+    return timeObj.getYear() + '/' + timeObj.getMonth() + "/" + timeObj.getDay()
+    
+  urlRoot: '/api/v0/journal'
+
   timeObj: () ->  # Calling this many times may be inefficient but whatever
     if @get('time') == 0 
       return new Date()
     else  
       return new Date(@get('time') * 1000)
   
+
+class Thyself.Collections.JournalEntries extends Backbone.Collection
+  model: Thyself.Models.JournalEntry
+  url: "/api/v0/journal"

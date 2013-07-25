@@ -14,9 +14,9 @@ class ThyselfRouter extends Backbone.Router
     settingsView.render()
   journal: (user, year, month, day) =>
     journalView = new Thyself.Views.JournalView()
-    jounalView.render()
+    journalView.render()
   entrySummary: (user, year, month, day, metric_name, entry_id, entry_desc) ->
-    entry = Thyself.Data.prefetch.get(entry_id)
+    entry = Thyself.Data.Entries.get(entry_id)
     entryView = new Thyself.Views.EntryEditView({model: entry})
     entryView.render()
   demoMain: () =>

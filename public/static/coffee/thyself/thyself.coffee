@@ -24,9 +24,11 @@ $("#mEntryForm").submit( () ->
     newEntry.url = '/i/demo/m'
 
   descriptionField = $(this).find("#description")
+  alert("Submitting form to " + actionUrl)
   
   entryFields = { description: descriptionField.val(), time: Math.round(new Date().getTime() / 1000) }; 
-  newEntry.save(entryFields, { success: (entry) => 
+  newEntry.save(entryFields, { 
+  success: (entry) => 
     console.log(entry.toJSON()); 
     #timeObj = new Date(entry.get("time") * 1000)
     #entry.set("time", timeObj )
@@ -34,7 +36,11 @@ $("#mEntryForm").submit( () ->
     entry.set("details", detailsCollection)
     Thyself.Page.sidebarView.collection.add(newEntry)
     Thyself.Page.sidebarView.render()
-  })
+  error: (model, response) =>
+    console.log(model)
+    console.log(response)
+  }
+  )
   descriptionField.val("")
   return false;
 );
