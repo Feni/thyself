@@ -46,7 +46,7 @@ alter table metric_details ADD CONSTRAINT detail_on_entry_deleted FOREIGN KEY (m
 
 -- ALTER TABLE users ADD COLUMN display_name varchar(70);
 -- ALTER TABLE metric_details DROP COLUMN d_group
--- ALTER TABLE metric_entries ADD COLUMN privacy int default 0;
+-- ALTER TABLE metric_entries ADD COLUMN me_privacy int default 0;
 
 CREATE INDEX entry_privacy ON metric_entries (privacy)
 

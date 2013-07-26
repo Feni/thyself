@@ -134,8 +134,7 @@ const PrefetchExample = `
       "details": new Thyself.Models.Details([
         new Thyself.Models.Detail({
           "amount": "7.5",
-          "type": "hours",
-          "group": "time"
+          "type": "hours"
         })
       ])
     }), new Thyself.Models.Entry({
@@ -147,12 +146,10 @@ const PrefetchExample = `
       "details": new Thyself.Models.Details([
         new Thyself.Models.Detail({
           "amount": "15",
-          "type": "minutes",
-          "group": "time"
+          "type": "minutes"
         }), new Thyself.Models.Detail({
           "amount": "2.5",
-          "type": "miles",
-          "group": "distance"
+          "type": "miles"
         })
       ])
     }), new Thyself.Models.Entry({
@@ -163,20 +160,17 @@ const PrefetchExample = `
       "metric": "laundry",
       "details": new Thyself.Models.Details([
       	new Thyself.Models.Detail({
-          "type": "blue",
-          "group": "color"
+          "type": "blue"
         }),
       	new Thyself.Models.Detail({
-          "type": "jeans",
-          "group": "clothes"
+          "type": "jeans"
         }),
         new Thyself.Models.Detail({
           "amount": "0.5",
           "type": "load"
         }), 
 		new Thyself.Models.Detail({
-          "type": "medium",
-          "group": "temperature"
+          "type": "medium"
         })
       ])
     }), new Thyself.Models.Entry({
@@ -188,12 +182,10 @@ const PrefetchExample = `
       "details": new Thyself.Models.Details([
         new Thyself.Models.Detail({
           "amount": "4",
-          "type": "cookies",
-          "group": "food"
+          "type": "cookies"
         }), new Thyself.Models.Detail({
           "amount": "274",
-          "type": "calories",
-          "group": "nutrition"
+          "type": "calories"
         })
       ])
     })
