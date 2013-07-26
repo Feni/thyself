@@ -148,7 +148,7 @@ class Thyself.Views.EntryEditView extends Backbone.View
     $(@el).find(".editAction").val(@model.get("metric"))
     Thyself.Page.sidebarView.render()
   deleteEntry: () =>
-    Thyself.router.navigate(@model.dateUrl(), { trigger: true })
+    Thyself.router.navigate(@model.dateUrl(), { trigger: true })  # todo: fix this so new page actually renders something
     @model.destroy()
     Thyself.Page.sidebarView.render()
 

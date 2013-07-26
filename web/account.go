@@ -24,7 +24,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	session, _ := cookieStore.Get(r, defaultSessionName)
-
 	valid := true
 
 

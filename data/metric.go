@@ -73,7 +73,6 @@ func GetMetricsByDate(user_id string, start_date, end_date int) []MetricEntry {
 			if err := rows.Scan(&(rowEntry.ID), &(rowEntry.UnixTime), &(rowEntry.Metric), &(rowEntry.Description), &entryPrivacy); err != nil {
 				log.Debug(err, "DATA : Metric : Retrieval Scan : FAILED : ")
 			} else {
-				log.Info("Entry privacy is ", entryPrivacy)
 				if entryPrivacy == 1{
 					rowEntry.Privacy = "PRIVATE"
 				}else {

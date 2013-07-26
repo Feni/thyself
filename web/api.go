@@ -58,7 +58,7 @@ func EntryListHandler(w http.ResponseWriter, r *http.Request) {
 		RespondEntry(w, structuredRep)
 	} 
 	default:
-		http.Error(w, "400 : Baaaddd Request!! String parameter 'description' is required. Try /m?description=I+fail+at+http", 400) // Client error
+		http.Error(w, "400 : Baaaddd Request!! String parameter 'description' is required. Try description=I+fail+at+http", 400) // Client error
 	}
 }
 
@@ -72,27 +72,19 @@ func EntryItemHandler(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET": {
 			// TODO : retrieve a specific metric
-			log.Info("Is get method")
 		}
 		case "PUT": { // Update 
 			// Check if the user is the owner of this entry
-
-			// Update that specific metric
-			log.Info("Got API request for entry id ", entry_id)
 			var metric data.MetricEntry
 			body, err := ioutil.ReadAll(r.Body)
 			log.Debug(err, "EntryListHandler - entry_id - Error reading create entry content body")
-			log.Info("Raw content body ", string(body))
 			if len(body) > 0 {
 				err := json.Unmarshal(body, &metric)
-				log.Debug(err, "ERROR; body Unmarhsall error ")
+				log.Debug(err, "ERROR; body Unmarhsall error "  + string(body))
 			}
-			log.Info("Unmarshalled api request body ", metric)
-
 			if GetLoggedInUser(r) == metric.User_ID {
 				valid, errMsg := metric.Validate()
 				if valid{
-					log.Info("Auth matches and data is valid. Updating ", metric)
 					data.UpdateMetric(&metric)
 					/* TODO: 
 					maybe return string(body) Make sure this isn't a security risk 
@@ -125,7 +117,6 @@ func CreateEntry(r *http.Request) *data.MetricEntry {
 	// Overwrite with form fields if not specified in content body
 	if metric.Description == "" {
 		metric.Description = r.FormValue("description")
-		log.Info("Form value description is ",  metric.Description)
 	}
 	if metric.UnixTime == 0 {
 		metric.UnixTime = util.GetTime(r)
@@ -156,12 +147,11 @@ func RespondEntry(w http.ResponseWriter, structuredRep *data.MetricEntry) {
 		jsonRep, err := json.MarshalIndent(structuredRep, "", "\t") // 4 spaces works too, but tab is more byte-efficient.
 		if err == nil {
 			fmt.Fprintln(w, string(jsonRep))
-			log.Info("Json rep is " + string(jsonRep))
 		} else {
 			http.Error(w, fmt.Sprintf("500: Ooops. Json Encoding Error %s", err), 500) // internal server error
 		}
 	} else {
 		// description was null
-		http.Error(w, "400 : Baaaddd Request!! String parameter 'description' is required. Try /m?description=I+fail+at+http", 400) // Client error
+		http.Error(w, "400 : Baaaddd Request!! String parameter 'description' is required. Try description=I+fail+at+http", 400) // Client error
 	}
 }
