@@ -25,7 +25,11 @@ func GetTime(r *http.Request) int64 {
 	var tNow = time.Now()
 	// Parse the time from the request header
 	hTimeRaw := r.Header.Get("Date")
+	log.Info(http.CanonicalHeaderKey("Date"))
+	log.Info("Header is ", r.Header)
 	log.Info("Header time is ", hTimeRaw, " local time is ", tNow)
+
+	log.Info("HEADER INFO is ", r.Header.Get("Info"))
 	if hTimeRaw != "" {
 		hTime, err := http.ParseTime(hTimeRaw)
 		if err == nil {

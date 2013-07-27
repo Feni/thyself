@@ -18,7 +18,7 @@ var TemplateJE *mustache.Template
 var TemplateActionEntry *mustache.Template
 
 var PartialLoginForm, PartialRegisterForm string
-var PartialScripts string
+var PartialScripts, PartialHeader string
 
 var AnonHomePage string
 
@@ -33,7 +33,7 @@ var cookieStore = sessions.NewCookieStore(
 
 const defaultSessionName = "thyself_private"
 
-func LoadTemplates() {
+func LoadTemplates(isDev bool) {
 	templateLoc := "/var/www/go/src/thyself/public/"
 
 	loginForm, err := ioutil.ReadFile(templateLoc + "partials/anon/loginForm.html")
@@ -44,9 +44,25 @@ func LoadTemplates() {
 	log.Debug(err, "Error loading registration form")
 	PartialRegisterForm = string(registerForm)
 
-	scripts, err := ioutil.ReadFile(templateLoc + "partials/scripts.html")
+	scriptsPath := templateLoc + "partials/prod/scriptsProd.html"
+	if isDev {
+		scriptsPath = templateLoc + "partials/dev/scriptsDev.html"
+	}
+
+	scripts, err := ioutil.ReadFile(scriptsPath)
 	log.Debug(err, "Error loading scripts")
 	PartialScripts = string(scripts)
+
+
+	headerPath := templateLoc + "partials/prod/headerProd.html"
+	if isDev {
+		headerPath = templateLoc + "partials/dev/headerDev.html"
+	}
+
+	header, err := ioutil.ReadFile(headerPath)
+	log.Debug(err, "Error loading headers")
+	PartialHeader = string(header)
+
 
 	actionEntry, err := ioutil.ReadFile(templateLoc + "partials/actionEntry.html")
 	log.Debug(err, "Error loading action entry")
@@ -64,7 +80,8 @@ func LoadTemplates() {
 	msgTemplTemp := string(mustache.Render(string(base),
 		map[string]string{
 			"content": string(messageTmpl),
-			"scripts": ""}))
+			"scripts": PartialScripts,
+			"header": PartialHeader}))
 
 	TemplateMessage, err = mustache.ParseString(msgTemplTemp)
 	log.Debug(err, "Error rendering message template")
@@ -75,7 +92,9 @@ func LoadTemplates() {
 		mustache.Render(string(base),
 			map[string]string{
 				"content": string(mainTmpl),
-				"scripts": string(PartialScripts) + "{{{prefetchedData}}}"}))
+				"scripts": PartialScripts,
+				"header": PartialHeader,
+				"prefetch": "{{{prefetchedData}}}"}))
 	TemplateMain, err = mustache.ParseString(mainTmplTemp)
 	log.Debug(err, "Error rendering main template")
 
@@ -85,7 +104,8 @@ func LoadTemplates() {
 		mustache.Render(string(base),
 			map[string]string{
 				"content": string(homepageTmpl),
-				"scripts": ""}))
+				"scripts": PartialScripts, 
+				"header": PartialHeader}))
 
 	// Most of the time, this is what we'll be serving up.
 	// So just cache it and return it.

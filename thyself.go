@@ -8,10 +8,13 @@ import (
 	"thyself/data"
 	"thyself/log"
 	"thyself/web"
+	"flag"
 )
 
+var isDev bool;
+
 func initServer() {
-	web.LoadTemplates() // Loads the template for all of the pages into memory
+	web.LoadTemplates(isDev) // Loads the template for all of the pages into memory
 	globalRouter := mux.NewRouter()
 
 	// Pages
@@ -49,6 +52,19 @@ func main() {
 	fmt.Println("Starting Thyself.io Server")
 	//startTime := time.Now()
 	log.InitLog()
+
+	devPtr := flag.Bool("dev",false,"Toggles dev mode (use local scripts, headers and enable debug code)")
+	flag.Parse()
+	isDev = *devPtr
+
+	if isDev{
+		fmt.Println("RUNNING IN DEVELOPMENT MODE")
+		log.Info("WARNING: Running in Development Mode")		
+	}else  {
+		fmt.Println("Running in production mode")
+		log.Info("Running in production mode")		
+	}
+
 	data.RedisInit()
 	data.SqlInit()
 	log.Info("Server started")
