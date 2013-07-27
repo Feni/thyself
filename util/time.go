@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"time"
-	"shared/log"
+	"thyself/log"
 )
 
 // given some time within a day
