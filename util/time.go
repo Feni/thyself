@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"time"
+	"shared/log"
 )
 
 // given some time within a day
@@ -24,6 +25,7 @@ func GetTime(r *http.Request) int64 {
 	var tNow = time.Now()
 	// Parse the time from the request header
 	hTimeRaw := r.Header.Get("Date")
+	log.Info("Header time is ", hTimeRaw, " local time is ", tNow)
 	if hTimeRaw != "" {
 		hTime, err := http.ParseTime(hTimeRaw)
 		if err == nil {

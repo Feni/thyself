@@ -23,7 +23,7 @@ $("#mEntryForm").submit( () ->
     newEntry.url = '/i/demo/m'
   descriptionField = $(this).find("#description")
   
-  entryFields = { description: descriptionField.val(), time: Math.round(new Date().getTime() / 1000) }; 
+  entryFields = { description: descriptionField.val() }; 
   newEntry.save(entryFields, { 
   success: (entry) => 
     console.log(entry.toJSON()); 

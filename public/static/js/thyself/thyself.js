@@ -639,8 +639,7 @@
     }
     descriptionField = $(this).find("#description");
     entryFields = {
-      description: descriptionField.val(),
-      time: Math.round(new Date().getTime() / 1000)
+      description: descriptionField.val()
     };
     newEntry.save(entryFields, {
       success: function(entry) {
