@@ -19,7 +19,7 @@ $(document).delegate "a", "click", (event) ->
 $("#mEntryForm").submit( () -> 
   actionUrl = $(this).attr('action')
   newEntry = new Thyself.Models.Entry(); 
-  if actionUrl == '/i/demo/m' 
+  if actionUrl == '/i/demo/m'
     newEntry.url = '/i/demo/m'
   descriptionField = $(this).find("#description")
   

@@ -29,6 +29,12 @@ class Thyself.Models.Entry extends Backbone.Model
     else  
       return new Date(@get('time') * 1000)
   urlRoot: '/api/v0/entries'
+  url: () ->
+    if @get("user_id") == "demo"
+      alert("returning url for demo user")
+      return '/i/demo/m'
+    else
+      return urlRoot + "/" + @get("id")
   pageUrl: () ->
     # remove special chars and create a url our of description
     # g for global match. Else stop after first find

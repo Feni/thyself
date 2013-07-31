@@ -105,12 +105,14 @@ func LoadTemplates(isDev bool) {
 			map[string]string{
 				"content": string(homepageTmpl),
 				"scripts": PartialScripts, 
-				"header": PartialHeader}))
+				"header": PartialHeader,
+				"prefetch": PrefetchExample}))
 
 	// Most of the time, this is what we'll be serving up.
 	// So just cache it and return it.
 	AnonHomePage = string(mustache.Render(homepageTmplTemp,
 		map[string]string{
+			"actionEntry": string(TemplateActionEntry.Render(map[string]string{"urlDate": "/i/demo"})),
 			"register": PartialRegisterForm,
 			"login":    PartialLoginForm}))
 

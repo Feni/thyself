@@ -136,11 +136,14 @@ class Thyself.Views.EntryEditView extends Backbone.View
     @model.save({
         id: @model.get('id')
       }, 
-      success: (model, response) =>
+      success: (response) =>
+        # needa change it from an obj to a proper type. else it bugs out when sidebar re-renders
+        detailsCollection = new Thyself.Models.Details(@model.get("details"))
+        @model.set("details", detailsCollection)
         newMessage = $("<li class='alert-box alert'>Entry saved successfully</li>")
         $(".message_flashes").append(newMessage)
         newMessage.delay(3500).fadeOut(1200);
-      error: (model, response) =>
+      error: (entry, response) =>
         newMessage = $("<li class='alert-box alert'>Error saving entry: "+response+"</li>")
         $(".message_flashes").append(newMessage)
         newMessage.delay(3500).fadeOut(1200);

@@ -75,6 +75,15 @@
 
     Entry.prototype.urlRoot = '/api/v0/entries';
 
+    Entry.prototype.url = function() {
+      if (this.get("user_id") === "demo") {
+        alert("returning url for demo user");
+        return '/i/demo/m';
+      } else {
+        return urlRoot + "/" + this.get("id");
+      }
+    };
+
     Entry.prototype.pageUrl = function() {
       var cleanDesc, modelUrl, tempTimeObj;
       cleanDesc = this.get("description").replace(new RegExp("\\s", "g"), "-").replace(new RegExp("[^A-Za-z0-9_-]", "g"), "-").slice(0, 80);
@@ -426,13 +435,15 @@
       this.model.save({
         id: this.model.get('id')
       }, {
-        success: function(model, response) {
-          var newMessage;
+        success: function(response) {
+          var detailsCollection, newMessage;
+          detailsCollection = new Thyself.Models.Details(_this.model.get("details"));
+          _this.model.set("details", detailsCollection);
           newMessage = $("<li class='alert-box alert'>Entry saved successfully</li>");
           $(".message_flashes").append(newMessage);
           return newMessage.delay(3500).fadeOut(1200);
         },
-        error: function(model, response) {
+        error: function(entry, response) {
           var newMessage;
           newMessage = $("<li class='alert-box alert'>Error saving entry: " + response + "</li>");
           $(".message_flashes").append(newMessage);

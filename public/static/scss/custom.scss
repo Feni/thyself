@@ -35,8 +35,8 @@ html, body {
   margin: 0; 
   padding: 0;
   background-color: $color-dark-bg; 
-  //background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
-  background: url("https://s3.amazonaws.com/ThyselfStatic/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  //background: url("https://s3.amazonaws.com/ThyselfStatic/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
   
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -350,6 +350,47 @@ $light-color:230;
 .buttonRow {
   text-align: right;  
 }
+
+.logo {
+  display: inline;
+}
+
+.account_btns {
+    display: inline;
+    text-align: center;
+    a {
+      display: inline-block;
+      font-family: $sans-font-family;
+      font-size: 0.65rem;      
+      background-color: rgb(20, 18, 17);
+      border: .6px solid rgba(10, 9, 8, 0.83);
+      color: white;
+      margin: 0px $std-pad / 2;
+      padding: (0.2rem) ($std-pad) (0.418rem) ($std-pad);
+      text-align: center;
+
+
+      b {
+        text-align: center;
+        font-size: 1rem;
+        text-shadow: 2px 2px 2px black;
+      /*  color: rgb(245, 245, 245); */
+        color: inherit;
+      }
+    }
+
+    .login_btn, .register_btn {
+      border-bottom:3px solid rgba(32,148,202, 0.8);  /* rgb(2, 113, 191) */
+      box-shadow: inset 0px 1px 0px 0px rgba(64,200,255, 0.22);
+      /* text-shadow: 1px 1px 0.3px rgba(64,200,255, 0.12); */
+      b {
+        color: rgb(32,148,202);
+      }
+    }
+
+
+  }
+
 
 /* Forms */
 
