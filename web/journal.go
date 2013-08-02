@@ -9,46 +9,69 @@ import (
 	"time"
 )
 
+func GetJournalText(r *http.Request, user_id string, rawtime time.Time) string{
+	jeText := ""
+	if r.Method == "POST" {
+		if jeText = r.FormValue("text"); jeText != "" {
+			jeText = util.Slice(jeText, 4000) // limit to 4000 chars
+			data.UpsertJournalEntry(user_id, rawtime, jeText)
+		}
+	} else {
+		je, _ := data.GetJournalEntry(user_id, rawtime)
+		jeText = je.Je_Text
+	}
+	return jeText
+}
+
 func JournalHandler(w http.ResponseWriter, r *http.Request) {
 	if user_id := GetLoggedInUser(r); user_id != "" {
-		jeText := ""
-		rawtime := time.Unix(util.GetTime(r), 0)
-		if r.Method == "POST" {
-			if jeText = r.FormValue("text"); jeText != "" {
-				jeText = util.Slice(jeText, 4000) // limit to 4000 chars
-				data.UpsertJournalEntry(user_id, rawtime, jeText)
-			}
-		} else {
-			je, _ := data.GetJournalEntry(user_id, rawtime)
-			jeText = je.Je_Text
-		}
-
-		vars := mux.Vars(r)
-		startTime, endTime := util.GetDayEndpoints(rawtime)
-		urlToday := UrlDay(user_id, rawtime)
-		// "magic" date based on golang example. don't change it
-		// Format is what's produced by javascript toDateString()
-		dateStr := rawtime.Format("Mon Jan 2 2006")
-
-		metrics_list := data.GetMetricsByDate(user_id, int(startTime), int(endTime))
-		preData := CreatePrefetch(metrics_list, vars["entry_id"])
-
-		rendered := RenderJournal(jeText, preData, urlToday, dateStr, BuildMessages(w, r), "")
-		fmt.Fprintln(w, rendered)
+		JournalHelper(w, r, user_id, "")
 	} else {
-		http.Redirect(w, r, "/a/login", 302) // TODO: change this url to today's date-time
+		http.Redirect(w, r, "/a/login", 302) 
 	}
 }
 
+func JournalHelper(w http.ResponseWriter, r *http.Request, user_id, extraScript string){
+	rawtime := time.Unix(util.GetTime(r), 0)
+	jeText := GetJournalText(r, user_id, rawtime)
+
+	vars := mux.Vars(r)
+	preData := CreatePrefetch(rawtime, jeText, user_id, vars["entry_id"])
+	
+	urlToday := UrlDay(user_id, rawtime)
+	// "magic" date based on golang example. don't change it
+	// Format is what's produced by javascript toDateString()
+	dateStr := rawtime.Format("Mon Jan 2 2006")
+
+	rendered := RenderJournal(jeText, preData + extraScript, urlToday, dateStr, BuildMessages(w, r), "")
+	fmt.Fprintln(w, rendered)
+}
+
+var DemoInputRotator = `
+	<script type="text/javascript">
+
+	document.exampleIndex = 0;
+	document.exampleInputs=["New Value 1", "second val", "third val"];
+ 	setInterval(function () {
+ 		document.exampleIndex = (document.exampleIndex + 1) % (document.exampleInputs.length);
+        $("#mEntryForm #description").attr("placeholder", document.exampleInputs[document.exampleIndex]);
+    },2500);
+
+		
+	</script>
+`
+
 func DemoHandler(w http.ResponseWriter, r *http.Request) {
-	rendered := RenderJournal("", PrefetchExample, "/i/demo", time.Unix(util.GetTime(r), 0).Format("Mon Jan 2 2006"), BuildMessages(w, r), PartialRegisterForm)
+	rendered := RenderJournal("", PrefetchExample + DemoInputRotator, "/i/demo", time.Unix(util.GetTime(r), 0).Format("Mon Jan 2 2006"), BuildMessages(w, r), PartialRegisterForm)
 	fmt.Fprintln(w, rendered)
 }
 
 func DemoParseHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" || r.Method == "PUT" {
 		structuredRep := CreateEntry(r)
-		structuredRep.User_ID = "demo"
+		if structuredRep != nil{
+			structuredRep.User_ID = "demo"
+		}
 		RespondEntry(w, structuredRep)
 	} else {
 		DemoHandler(w, r)
@@ -76,7 +99,12 @@ func RenderJournal(journalText, preData, urlDate, dateStr, flashes, sidebarExtra
 	return pageRendered
 }
 
-func CreatePrefetch(entries_list []data.MetricEntry, entry_id string) string {
+// Returns rendered prefetch and raw journal entry text
+// TODO : escape quotes properly
+func CreatePrefetch(rawtime time.Time, jeText, user_id, entry_id string) string {
+	startTime, endTime := util.GetDayEndpoints(rawtime)
+	entries_list := data.GetMetricsByDate(user_id, int(startTime), int(endTime))
+
 	preData := `<script type="text/javascript">`
 
 	renderedEntries := "var defaultEntries = new Thyself.Models.Entries(["
@@ -90,6 +118,10 @@ func CreatePrefetch(entries_list []data.MetricEntry, entry_id string) string {
 	preData += renderedEntries
 
 	//journalEntry := "Thyself.Data.Journal = new Thyself.Models.JournalEntry();"
+	// Because this is after the thyself.js, the main application doesn't know who the user or
+	// time is until after this module is loaded
+	preData += `Thyself.Data.ContextDate = new Date(` + fmt.Sprintf("%d",rawtime.Unix()) + `*1000);`
+	preData += `Thyself.Data.ContextUser = "` + user_id + `";`
 
 	preData += `  Thyself.Data.Entries = defaultEntries;
   	Thyself.Page.sidebarView = new Thyself.Views.EntrySummaryListView({

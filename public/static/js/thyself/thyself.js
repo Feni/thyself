@@ -80,7 +80,7 @@
         alert("returning url for demo user");
         return '/i/demo/m';
       } else {
-        return urlRoot + "/" + this.get("id");
+        return this.urlRoot + "/" + this.get("id");
       }
     };
 
@@ -117,6 +117,10 @@
     Entries.prototype.model = Thyself.Models.Entry;
 
     Entries.prototype.url = "/api/v0/entries";
+
+    Entries.prototype.comparator = function(e) {
+      return -1 * e.get("time");
+    };
 
     return Entries;
 
@@ -641,7 +645,7 @@
   });
 
   $("#mEntryForm").submit(function() {
-    var actionUrl, descriptionField, entryFields, newEntry,
+    var actionUrl, descriptionField, entryFields, mergedTime, newEntry, timeNow,
       _this = this;
     actionUrl = $(this).attr('action');
     newEntry = new Thyself.Models.Entry();
@@ -649,8 +653,11 @@
       newEntry.url = '/i/demo/m';
     }
     descriptionField = $(this).find("#description");
+    timeNow = new Date();
+    mergedTime = new Date(Thyself.Data.ContextDate.getFullYear(), Thyself.Data.ContextDate.getMonth(), Thyself.Data.ContextDate.getDate(), timeNow.getHours(), timeNow.getMinutes(), timeNow.getSeconds(), timeNow.getMilliseconds());
     entryFields = {
-      description: descriptionField.val()
+      description: descriptionField.val(),
+      time: Math.round(mergedTime.getTime() / 1000)
     };
     newEntry.save(entryFields, {
       success: function(entry) {
@@ -659,6 +666,7 @@
         detailsCollection = new Thyself.Models.Details(entry.get("details"));
         entry.set("details", detailsCollection);
         Thyself.Page.sidebarView.collection.add(newEntry);
+        Thyself.Page.sidebarView.collection.sort();
         return Thyself.Page.sidebarView.render();
       },
       error: function(model, response) {

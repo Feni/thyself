@@ -34,7 +34,7 @@ class Thyself.Models.Entry extends Backbone.Model
       alert("returning url for demo user")
       return '/i/demo/m'
     else
-      return urlRoot + "/" + @get("id")
+      return @urlRoot + "/" + @get("id")
   pageUrl: () ->
     # remove special chars and create a url our of description
     # g for global match. Else stop after first find
@@ -62,6 +62,10 @@ class Thyself.Models.Entry extends Backbone.Model
 class Thyself.Models.Entries extends Backbone.Collection
   model: Thyself.Models.Entry
   url: "/api/v0/entries"
+  # Newest entries up top
+  comparator: (e) -> 
+    return -1 * e.get("time") 
+
   # Create a tree grouping toghether thigns in similar
   # categories > then types > then date
 #  groupData: () =>

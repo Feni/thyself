@@ -22,16 +22,21 @@ $("#mEntryForm").submit( () ->
   if actionUrl == '/i/demo/m'
     newEntry.url = '/i/demo/m'
   descriptionField = $(this).find("#description")
-  
-  entryFields = { description: descriptionField.val() }; 
+  timeNow = new Date()
+  mergedTime = new Date(Thyself.Data.ContextDate.getFullYear(), Thyself.Data.ContextDate.getMonth(), Thyself.Data.ContextDate.getDate(), 
+    timeNow.getHours(), timeNow.getMinutes(), timeNow.getSeconds(), timeNow.getMilliseconds())
+
+  entryFields = { 
+    description: descriptionField.val(),
+    time: Math.round(mergedTime.getTime() / 1000)
+  };
   newEntry.save(entryFields, { 
   success: (entry) => 
     console.log(entry.toJSON()); 
-    #timeObj = new Date(entry.get("time") * 1000)
-    #entry.set("time", timeObj )
     detailsCollection = new Thyself.Models.Details(entry.get("details"))
     entry.set("details", detailsCollection)
     Thyself.Page.sidebarView.collection.add(newEntry)
+    Thyself.Page.sidebarView.collection.sort()
     Thyself.Page.sidebarView.render()
   error: (model, response) =>
     console.log(model)
@@ -43,13 +48,9 @@ $("#mEntryForm").submit( () ->
 );
 
 $(".alert-box").delay(5500).fadeOut(1200);
-
 # TODO: journal entry form
-
 
 
 Backbone.history.start({ pushState: true })
 Thyself.router = new ThyselfRouter();
-
-
 

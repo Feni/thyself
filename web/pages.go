@@ -106,7 +106,7 @@ func LoadTemplates(isDev bool) {
 				"content": string(homepageTmpl),
 				"scripts": PartialScripts, 
 				"header": PartialHeader,
-				"prefetch": PrefetchExample}))
+				"prefetch": PrefetchExample + DemoInputRotator}))
 
 	// Most of the time, this is what we'll be serving up.
 	// So just cache it and return it.
@@ -166,13 +166,13 @@ const PrefetchExample = `
       "time": 1372495416,
       "metric": "run",
       "details": new Thyself.Models.Details([
-        new Thyself.Models.Detail({
-          "amount": "15",
-          "type": "minutes"
-        }), new Thyself.Models.Detail({
+      	new Thyself.Models.Detail({
           "amount": "2.5",
           "type": "miles"
-        })
+        }), new Thyself.Models.Detail({
+          "amount": "15",
+          "type": "minutes"
+        }) 
       ])
     }), new Thyself.Models.Entry({
       "id": "oQdR5OlY",
@@ -193,21 +193,6 @@ const PrefetchExample = `
         }), 
 		new Thyself.Models.Detail({
           "type": "medium"
-        })
-      ])
-    }), new Thyself.Models.Entry({
-      "id": "7YRakSmr",
-      "user_id": "demo",
-      "description": "I ate 4 cookies",
-      "time": 1372199416,
-      "metric": "eat",
-      "details": new Thyself.Models.Details([
-        new Thyself.Models.Detail({
-          "amount": "4",
-          "type": "cookies"
-        }), new Thyself.Models.Detail({
-          "amount": "274",
-          "type": "calories"
         })
       ])
     })
