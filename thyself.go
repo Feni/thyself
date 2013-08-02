@@ -32,11 +32,14 @@ func initServer() {
 	globalRouter.HandleFunc("/a/logout", web.LogoutHandler)
 	globalRouter.HandleFunc("/a/register", web.RegisterHandler)
 
+	// putting it in account for now cuz I don't want the ajax trying to load this link
+	globalRouter.HandleFunc("/a/terms", web.TermsHandler)
+
 	// i = informational. For site-support pages like
 	// demo, api docs, blog, etc.
 	globalRouter.HandleFunc("/i/demo", web.DemoHandler)
 	globalRouter.HandleFunc("/i/demo/m", web.DemoParseHandler)
-	globalRouter.HandleFunc("/i/terms", web.TermsHandler)
+	
 
 	// Parse will be handled here too
 	apiRouter := globalRouter.PathPrefix("/api/v0/").Subrouter()
