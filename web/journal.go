@@ -51,11 +51,14 @@ var DemoInputRotator = `
 	<script type="text/javascript">
 
 	document.exampleIndex = 0;
-	document.exampleInputs=["New Value 1", "second val", "third val"];
+	document.exampleInputs=["I slept for 7.5 hours", "I played basketball for 2 hours and scored 10 points", 
+	"I watered the cactus",	"I took my vitamins", 
+	"I ate pasta for lunch with Paul at the mall","I bought new glasses", 
+	"Drank 2 cups of water", "I studied for my calculus exam for 3 hours at the library"];
  	setInterval(function () {
  		document.exampleIndex = (document.exampleIndex + 1) % (document.exampleInputs.length);
         $("#mEntryForm #description").attr("placeholder", document.exampleInputs[document.exampleIndex]);
-    },2500);
+    },3500);
 
 		
 	</script>
