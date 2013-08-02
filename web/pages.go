@@ -21,6 +21,7 @@ var PartialLoginForm, PartialRegisterForm string
 var PartialScripts, PartialHeader string
 
 var AnonHomePage string
+var TermsPage string
 
 const MSG_SUCCESS = "success"
 const MSG_ERROR = "alert"
@@ -106,7 +107,7 @@ func LoadTemplates(isDev bool) {
 				"content": string(homepageTmpl),
 				"scripts": PartialScripts, 
 				"header": PartialHeader,
-				"prefetch": PrefetchExample + DemoInputRotator}))
+				"prefetch": PrefetchExample}))
 
 	// Most of the time, this is what we'll be serving up.
 	// So just cache it and return it.
@@ -115,6 +116,17 @@ func LoadTemplates(isDev bool) {
 			"actionEntry": string(TemplateActionEntry.Render(map[string]string{"urlDate": "/i/demo"})),
 			"register": PartialRegisterForm,
 			"login":    PartialLoginForm}))
+
+
+	termsTmpl, err := ioutil.ReadFile(templateLoc + "templates/terms.html")
+	TermsPage = string(mustache.Render(string(base),
+			map[string]string{
+				"content": string(termsTmpl),
+				"scripts": PartialScripts, 
+				"header": PartialHeader,
+				"prefetch": ""}))
+
+
 
 	// Note that escaping is space sensitive {{var}} != {{ var }}. Only the first one works
 }

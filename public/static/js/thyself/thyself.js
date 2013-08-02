@@ -77,7 +77,6 @@
 
     Entry.prototype.url = function() {
       if (this.get("user_id") === "demo") {
-        alert("returning url for demo user");
         return '/i/demo/m';
       } else {
         return this.urlRoot + "/" + this.get("id");
@@ -385,7 +384,7 @@
       $(this.el).html("");
       $(this.el).addClass("width-full");
       $(this.el).addClass("dataSummaryTable");
-      $(this.el).append("<thead>\n  <tr>\n    <th class=\"fixed-width-3 column\">Amount</th>\n    <th class=\"fixed-width-3 column\">Type</th>\n  </tr>\n</thead>");
+      $(this.el).append("<thead>\n  <tr>\n    <th class=\"fixed-width-4 column\">Amount</th>\n    <th class=\"fixed-width-4 column\">Type</th>\n  </tr>\n</thead>");
       _(this.collection.models).each(function(detail) {
         var detailView;
         detailView = new DetailEditView({

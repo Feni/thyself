@@ -9,7 +9,6 @@ class Thyself.Models.Detail extends Backbone.Model
 class Thyself.Models.Details extends Backbone.Collection
   model: Thyself.Models.Detail
 
-# TODO: implement the built-in 'validate' function
 class Thyself.Models.Entry extends Backbone.Model
   defaults:
     id: "",
@@ -31,7 +30,6 @@ class Thyself.Models.Entry extends Backbone.Model
   urlRoot: '/api/v0/entries'
   url: () ->
     if @get("user_id") == "demo"
-      alert("returning url for demo user")
       return '/i/demo/m'
     else
       return @urlRoot + "/" + @get("id")

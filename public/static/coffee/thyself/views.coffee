@@ -104,8 +104,8 @@ class DetailsListEditView extends Backbone.View
     $(@el).addClass("dataSummaryTable")
     $(@el).append("""<thead>
         <tr>
-          <th class="fixed-width-3 column">Amount</th>
-          <th class="fixed-width-3 column">Type</th>
+          <th class="fixed-width-4 column">Amount</th>
+          <th class="fixed-width-4 column">Type</th>
         </tr>
       </thead>
     """)

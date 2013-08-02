@@ -36,6 +36,7 @@ func initServer() {
 	// demo, api docs, blog, etc.
 	globalRouter.HandleFunc("/i/demo", web.DemoHandler)
 	globalRouter.HandleFunc("/i/demo/m", web.DemoParseHandler)
+	globalRouter.HandleFunc("/i/terms", web.TermsHandler)
 
 	// Parse will be handled here too
 	apiRouter := globalRouter.PathPrefix("/api/v0/").Subrouter()

@@ -22,11 +22,16 @@ var TimeRedirectScript = `
 `
 
 func HomepageHandler(w http.ResponseWriter, r *http.Request) {
-	LoadTemplates(true)	//	 todo : remove for prod
+	//LoadTemplates(true)	//	 todo : remove for prod
 	if user_id := GetLoggedInUser(r); user_id != "" { 
 		//http.Redirect(w, r, UrlDay(GetLoggedInUser(r), time.Unix(util.GetTime(r), 0)), 302) // TODO: change this url to today's date-time
 		JournalHelper(w, r, user_id, TimeRedirectScript)
 	} else {
 		fmt.Fprintln(w, AnonHomePage)
 	}
+}
+
+
+func TermsHandler(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintln(w, TermsPage)
 }

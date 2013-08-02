@@ -35,8 +35,8 @@ html, body {
   margin: 0; 
   padding: 0;
   background-color: $color-dark-bg; 
-  background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
-  //background: url("https://s3.amazonaws.com/ThyselfStatic/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  //background: url("/static/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
+  background: url("https://s3.amazonaws.com/ThyselfStatic/img/Unsplash_Alejandro_E.jpg") no-repeat center center fixed; 
   
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -67,6 +67,7 @@ header{
 }
 
 ul{
+  margin-top: 0px;
   list-style-type: none;
   padding-left: 0px;
 }
@@ -147,10 +148,6 @@ label, small{
 }
 
 
-ul{
-  margin-top: 0px;
-}
-
 
 /* Layout elements */
 /* ID of top-level layout div in body */
@@ -223,6 +220,18 @@ $dbl-pad-pct: 4.1%; /* Equivalent value in percent, manually computed */
   .date {
     margin-bottom: ($std-pad / 4);
   }
+}
+
+.terms {
+  ul{
+    list-style-type: circle;
+  }
+  li {
+    font-family: $serif-sub-font-family;
+    font-size: 1em; 
+    line-height: 1.65em;
+  }  
+
 }
 
 #journal_footer {
