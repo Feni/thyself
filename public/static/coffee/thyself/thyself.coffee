@@ -1,3 +1,4 @@
+
 # Hook to all link-clicks on the page so we can route it using push-state
 $(document).delegate "a", "click", (event) -> 
   # Get the anchor href and protcol

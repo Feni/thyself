@@ -1,3 +1,10 @@
+###
+Copyright Feni Varughese
+Thyself.io Version 0.06.00
+Last Updated: August 3, 2013 - 2:35
+###
+
+
 class Thyself.Models.Detail extends Backbone.Model
   defaults:
     amount: "",

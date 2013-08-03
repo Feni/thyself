@@ -20,7 +20,6 @@ type MetricEntry struct {
 	User_ID     string `json:"user_id"`
 	Description string `json:"description"`
 	UnixTime    int64  `json:"time"` // TODO: rename in code
-	//	LinkedData  string         `json:"linked_data,omitempty"`
 	Metric  string      `json:"metric"`
 	Privacy string 		`json:"privacy"`	// values = PRIVATE, PUBLIC
 	Details []MetricDetail `json:"details"`
@@ -52,7 +51,6 @@ func AddMetric(user_id string, metric *MetricEntry) {
 func DeleteMetric(user_id, metric_id string){
 	_, err := SQL_DELETE_ME.Exec(user_id, metric_id)
 	log.Debug(err, "DATA: Delete metric FAILED ")
-	
 }
 
 // For now just delete the old metric and re-add it
