@@ -4,7 +4,7 @@ import (
 	//"fmt"
 	"strings"
 	"thyself/data"
-	"thyself/log"
+//	"thyself/log"
 )
 
 func preProc(sentence string) string {
@@ -14,11 +14,11 @@ func preProc(sentence string) string {
 }
 
 func Parse(sentence string) *data.MetricEntry {
-	log.Info("nlp : parsing : " + sentence)
+	//log.Info("nlp : parsing : " + sentence)
 	rawSentenec := sentence
 	sentence = preProc(sentence)
 	sentence = replaceNumbers(sentence)
-	log.Info("nlp : prepoc-num : " + sentence)
+	//log.Info("nlp : prepoc-num : " + sentence)
 	parts := getComponents(sentence)
 	//log.Info("nlp : parts : " , parts)
 	if len(parts) >= 1 {

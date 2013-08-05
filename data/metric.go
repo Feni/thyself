@@ -26,7 +26,7 @@ type MetricEntry struct {
 }
 
 func AddMetric(user_id string, metric *MetricEntry) {
-	log.Info("data : Add Metric : ", metric, " : USER : ", user_id)
+	//log.Info("data : Add Metric : ", metric, " : USER : ", user_id)
 	// (user_id, me_time, me_id, action, description, details)
 	privacyVal := 0	 // public
 	if metric.Privacy == "PRIVATE" {
