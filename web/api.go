@@ -53,66 +53,71 @@ func EntryListHandler(w http.ResponseWriter, r *http.Request) {
 
 			}
 		}
-	case "POST", "PUT": { // Create
-		structuredRep := CreateEntry(r)
-		RespondEntry(w, structuredRep)
-	} 
+	case "POST", "PUT":
+		{ // Create
+			structuredRep := CreateEntry(r)
+			RespondEntry(w, structuredRep)
+		}
 	default:
 		http.Error(w, "400 : Baaaddd Request!! String parameter 'description' is required. Try description=I+fail+at+http", 400) // Client error
 	}
 }
 
 func EntryItemHandler(w http.ResponseWriter, r *http.Request) {
-//	session, _ := cookieStore.Get(r, defaultSessionName)
-//	user_id := fmt.Sprintf("%s", session.Values["user_id"])
+	//	session, _ := cookieStore.Get(r, defaultSessionName)
+	//	user_id := fmt.Sprintf("%s", session.Values["user_id"])
 	vars := mux.Vars(r)
 	entry_id := vars["entry_id"]
 
 	if entry_id != "" {
 		switch r.Method {
-		case "GET": {
-			// TODO : retrieve a specific metric
-		}
-		case "PUT": { // Update 
-			// Check if the user is the owner of this entry
-			var metric data.MetricEntry
-			body, err := ioutil.ReadAll(r.Body)
-			log.Debug(err, "EntryListHandler - entry_id - Error reading create entry content body")
-			if len(body) > 0 {
-				err := json.Unmarshal(body, &metric)
-				log.Debug(err, "ERROR; body Unmarhsall error "  + string(body))
+		case "GET":
+			{
+				// TODO : retrieve a specific metric
 			}
-			if GetLoggedInUser(r) == metric.User_ID {
-				valid, errMsg := metric.Validate()
-				if valid{
-					data.UpdateMetric(&metric)
-					/* TODO: 
-					maybe return string(body) Make sure this isn't a security risk 
-					I get a bad feeling returning user defined stuff...
-					*/
-					fmt.Fprintln(w, "{}" )
-				}else {
-					log.Info("Update failed. Error is " + errMsg )
-					http.Error(w, "400 : Baaaddd Request!! " + errMsg, 400) // Client error
+		case "PUT":
+			{ // Update
+				// Check if the user is the owner of this entry
+				var metric data.MetricEntry
+				body, err := ioutil.ReadAll(r.Body)
+				log.Debug(err, "EntryListHandler - entry_id - Error reading create entry content body")
+				if len(body) > 0 {
+					err := json.Unmarshal(body, &metric)
+					log.Debug(err, "ERROR; body Unmarhsall error "+string(body))
 				}
-			}else {
-				http.Error(w, "401 : Unauthorized!! Login before you send a request", 400)
+				if GetLoggedInUser(r) == metric.User_ID {
+					valid, errMsg := metric.Validate()
+					if valid {
+						data.UpdateMetric(&metric)
+						/* TODO:
+						maybe return string(body) Make sure this isn't a security risk
+						I get a bad feeling returning user defined stuff...
+						*/
+						fmt.Println(w, string(body))
+					} else {
+						log.Info("Update failed. Error is " + errMsg)
+						http.Error(w, "400 : Baaaddd Request!! "+errMsg, 400) // Client error
+					}
+				} else {
+					http.Error(w, "401 : Unauthorized!! Login before you send a request", 400)
+				}
+			}
+		case "DELETE":
+			{
+				data.DeleteMetric(GetLoggedInUser(r), entry_id)
 			}
 		}
-		case "DELETE":{
-			data.DeleteMetric(GetLoggedInUser(r), entry_id)
-		}
-		}
+		// Maybe for all methods, return the entry by that id afterwards...
 	}
 }
 
 func CreateEntry(r *http.Request) *data.MetricEntry {
-	var metric data.MetricEntry;
+	var metric data.MetricEntry
 	body, err := ioutil.ReadAll(r.Body)
 	log.Debug(err, "Error reading create entry content body")
 	if len(body) > 0 {
 		err := json.Unmarshal(body, &metric)
-		log.Debug(err, "ERROR; body Unmarhsall error " + string(body))
+		log.Debug(err, "ERROR; body Unmarhsall error "+string(body))
 	}
 	// Overwrite with form fields if not specified in content body
 	if metric.Description == "" {
@@ -121,7 +126,7 @@ func CreateEntry(r *http.Request) *data.MetricEntry {
 	if metric.UnixTime == 0 {
 		metric.UnixTime = util.GetTime(r)
 	}
-	if metric.Privacy == ""{
+	if metric.Privacy == "" {
 		metric.Privacy = "PUBLIC"
 	}
 	if metric.Description != "" {

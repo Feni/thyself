@@ -443,13 +443,11 @@ Last Updated: August 3, 2013 - 2:35
       newAction = $.trim($(this.el).find(".editAction").val());
       newDescription = $.trim($(this.el).find(".editDescription").val());
       $(this.el).find(".detailRow").trigger("save");
-      this.model.save({
-        id: this.model.get('id')
-      }, {
+      this.model.save({}, {
         success: function(response) {
-          var detailsCollection, newMessage;
-          detailsCollection = new Thyself.Models.Details(_this.model.get("details"));
-          _this.model.set("details", detailsCollection);
+          var newMessage;
+          console.log("After save, details are ");
+          console.log(_this.model.get("details"));
           newMessage = $("<li class='alert-box alert'>Entry saved successfully</li>");
           $(".message_flashes").append(newMessage);
           return newMessage.delay(3500).fadeOut(1200);
