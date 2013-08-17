@@ -1,0 +1,71 @@
+sudo mkdir /var/www
+
+
+sudo usermod -a -G www-data "$USER"
+# http://askubuntu.com/questions/46331/how-to-avoid-using-sudo-when-working-in-var-www
+sudo chown -R "$USER":www-data /var/www
+find /var/www -type f -exec chmod 0660 {} \;
+sudo find /var/www -type d -exec chmod 2770 {} \;
+
+mkdir /var/www/go
+mkdir /var/www/go/logs
+mkdir /var/www/go/pkg
+mkdir /var/www/go/src
+
+
+sudo apt-get install git
+
+cd /var/www/go/src
+git clone https://Feni@bitbucket.org/Feni/thyself.git thyself
+
+
+
+Get the key file (ThyselfKey1)
+move it to /var/ssh/keys (have to make this directory first)
+sudo chmod 0600 ThyselfKey1.pem  (This is important. else ssh ignores us)
+
+
+sudo ssh -i /var/ssh/keys/ThyselfKey1.pem -p 9273 ubuntu@54.244.237.74
+
+add the -v option if you want to debug connection issues. 
+Ctrl-D to exit out of ssh session. 
+
+Setting up a new key (on the server) is a pain in the ass. So keep the key backed up at all times. 
+
+
+get go from google code. extract it to /usr/local/go or something something. 
+export GOROOT=/usr/local/go
+add goroot to end of path
+export GOPATH=/var/www/go
+
+
+
+sudo apt-get install nginx
+
+apt-get install postgresql-9.1 
+apt-get install postgresql-client
+apt-get install postgresql-contrib
+
+
+go get github.com/gorilla/mux
+go get github.com/garyburd/redigo/redis
+go get github.com/bmizerany/pq
+go get code.google.com/p/go.crypto/bcrypt -- apt-get install mercurial
+go get github.com/gorilla/sessions
+go get github.com/hoisie/mustache
+
+touch /var/www/go/logs/go_thy.log
+touch nginx_access.log
+touch nginx_error.log
+
+cd /etc/nginx/sites-available
+move devServerSomething.conf here
+
+sudo ln -s /sites-available/thyDevserver.conf thyDevServer
+sudo rm default
+
+sudo service nginx reload
+sudo service nginx restart
+
+
+sudo vi /etc/hosts

@@ -1,0 +1,28 @@
+enable workspaces (appearnces)
+Fixed dongle wireless
+http://ubuntuforums.org/showthread.php?t=1705004
+
+Fixed built in intel wireless
+http://wireless.kernel.org/en/users/Drivers/iwlwifi
+
+install sublime text 3
+
+sudo apt-get install zsh
+
+type zsh and do option 2 for recomended settings. 
+chsh -s /bin/zsh cobalt
+
+wget --no-check-certificate https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+
+Then logout and log back in
+
+# open terminal here option. 
+sudo apt-get install nautilus-open-terminal
+
+# The version of vi that comes with ubuntu is minimal. My vimrc won't work with it. Install the full thing. 
+sudo apt-get install vim
+
+git config --global user.email "feni727@gmail.com"
+git config --global user.name "Feni Varughese"
+
+
